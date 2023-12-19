@@ -1,0 +1,28 @@
+{
+  "folders": [
+    {
+      "name": "backend",
+      "path": "backend",
+      "settings": {
+        "eslint.format.enable": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": true
+        },
+        "eslint.validate": [
+          "typescript"
+        ]
+      }
+    },
+    {
+      "name": "project",
+      "path": ".",
+      "settings": {
+      }
+    }
+  ],
+  "settings": {
+    "eslint.validate": [
+      "typescript"
+    ]
+  }
+}

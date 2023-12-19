@@ -1,0 +1,69 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -f dist/bundle.js",
+    "build-dev": "webpack --mode development",
+    "build-prod": "webpack --mode production",
+    "update-defender-autotask": "source .env && defender-autotask update-code $AUTO_TASK_ID ./dist/",
+    "deploy": "source .env && npx hardhat compile && webpack --mode production && defender-autotask update-code $AUTO_TASK_ID ./dist/"
+  },
+  "author": "",
+  "license": "ISC",
+  "prettier": {
+    "printWidth": 100
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.1.0",
+    "@nomiclabs/hardhat-etherscan": "^3.1.0",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@openzeppelin/contracts": "^4.7.0",
+    "@typechain/ethers-v5": "^10.1.0",
+    "@typechain/hardhat": "^6.1.2",
+    "@types/chai": "^4.3.1",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^12.20.55",
+    "@typescript-eslint/eslint-plugin": "^5.32.0",
+    "@typescript-eslint/parser": "^5.32.0",
+    "airtable": "^0.11.4",
+    "chai": "^4.3.6",
+    "defender-autotask-client": "^1.27.1",
+    "dotenv": "^16.0.1",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-import-resolver-typescript": "^3.4.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.0",
+    "ethereum-waffle": "^3.4.4",
+    "hardhat-gas-reporter": "^1.0.8",
+    "prettier": "^2.7.1",
+    "prettier-plugin-solidity": "^1.0.0-dev.23",
+    "solhint": "^3.3.7",
+    "solidity-coverage": "^0.7.21",
+    "ts-loader": "^9.3.1",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.1.0",
+    "typescript": "^4.7.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "dependencies": {
+    "@ethersproject/bignumber": "^5.6.2",
+    "@types/uuid": "^8.3.4",
+    "defender-autotask-utils": "^1.28.1",
+    "defender-relay-client": "^1.27.1",
+    "ethers": "^5.6.9",
+    "hardhat": "^2.10.1",
+    "node-fetch": "2.6.6",
+    "random-word-slugs": "^0.1.6",
+    "uuid": "^8.3.2"
+  }
+}
