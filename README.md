@@ -1,2 +1,2 @@
 # Tree App
- Tree Planting App for City of Oakland
+ Tree planting tokenization app for City of Oakland
