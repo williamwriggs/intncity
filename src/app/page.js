@@ -1,95 +1,133 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+import React, { useState, useEffect } from 'react';
+import { useLocalStorage } from "@/utilities/useLocalStorage";
+import CssBaseline from '@mui/material/CssBaseline';
+import { 
+  Box,
+  Button,
+  Grid,
+  Link,
+  Paper,
+  TextField,
+  Typography,
+  AppBar
+ } from '@mui/material';
+import appTheme from '@/theme.js';
+import { ThemeProvider } from '@mui/material/styles';
+import { useRouter } from 'next/navigation';
 
-export default function Home() {
+function Copyright() {
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <Typography variant="body2" color="text.secondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://intn.city/">
+      INTNCITY
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+export default function StartTreePlantingRequest() {
+  let navigate = useRouter().push;  
+  const [email, setEmail] = useLocalStorage("email", "");
+
+  const handleChangeEmail = (event) => {
+    setEmail(event.target.value);
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    // Force application state reset
+    localStorage.setItem("appStep", 0);
+    
+    navigate('/plant');
+  }
+
+  return (
+    <ThemeProvider theme={appTheme}>
+      <Grid container sx={{ height: '100vh' }}>
+
+        {/*  Left Column - Background Image */}
+
+        <Grid
+          item
+          sm={false}
+          md={4}
+          sx={{
+            backgroundImage: 'url(http://intn.city/wp-content/uploads/2021/09/Intensity-cover.jpg)',  //url("http://intn.city/wp-content/uploads/2021/09/Intensity-cover.jpg")
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         />
-      </div>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+        {/*  Right Column - Text Field */}
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+        <CssBaseline />
+        <Grid item sm={12} md={8}>
+          <Grid align="right" color="transparent">
+            <Button 
+              color="secondary" 
+              type="button" 
+              size="large"
+              variant="contained"
+              sx={{
+                borderRadius: "0 0 0 5px",
+              }}
+              onClick={() => {
+                navigate("/login")
+              }}
+            >Sign In</Button>
+          </Grid>
+          <Box
+              sx={{
+                my: 8,
+                mx: 6,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Typography component="h1" variant="h4" color="primary" pb={4}>Better Neighborhoods.  Same Neighbors.</Typography>
+              <Typography component="h2" variant="h6" color="secondary">
+                We’re trying to make planting trees more efficient through the power of community—starting in the City of Oakland. Tell us where you plan to put your tree let us and we will help make sure the location is right and you’ll be sure you're making our neighborhoods greener and better.
+              </Typography>
+              <Box component="form" onSubmit={handleSubmit} noValidate 
+                 display="flex" flexDirection="column" justifyContent="flex-start" alignItems="center" mt={10}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  onChange={handleChangeEmail}
+                  variant="standard" 
+                  sx={{width: 400}}
+                  value={email}
+                />
+                <Button 
+                  type='submit'
+                  size="large" 
+                  variant="contained" 
+                  color="secondary"
+                  disabled={email != ""}
+                  sx={{width: 200, mt: 2, mb: 2}}>
+                    Plant a Tree
+                </Button>
+              </Box>
+            </Box>
+            <Copyright />
+        </Grid>
+      </Grid>
+    </ThemeProvider>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
   );
 }
