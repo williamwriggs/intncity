@@ -37,7 +37,7 @@ export default function SignIn() {
 
     console.log(auth)
 
-  const handleLogin = (event) => {
+  const handleLogin = (event, method) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = String(data.get('email'));
@@ -50,6 +50,87 @@ export default function SignIn() {
       console.log("connected")
     }
   };
+
+  const EmailPasswordSignIn = () => {
+    return (
+      <Box 
+        component="form" 
+        noValidate 
+        onSubmit={(e) => {
+          handleLogin(e, "emailpassword")
+        }} 
+        sx={{ mt: 1 }}
+      >
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="email"
+          label="Email Address"
+          name="email"
+          autoComplete="email"
+          autoFocus
+        />
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          name="password"
+          label="Password"
+          type="password"
+          id="password"
+          autoComplete="current-password"
+        />
+        <FormControlLabel
+          control={<Checkbox value="remember" color="primary" />}
+          label="Remember me"
+        />
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          Sign In
+        </Button>
+        <Grid container>
+          <Grid item xs>
+            <Link href="#" variant="body2">
+              Forgot password?
+            </Link>
+          </Grid>
+          <Grid item>
+            <Link href="#" variant="body2">
+              {"Don't have an account? Sign Up"}
+            </Link>
+          </Grid>
+        </Grid>
+        <Copyright sx={{ mt: 5 }} />
+      </Box>
+    )
+  }
+
+  const GoogleSignIn = () => {
+    return (
+      <Box 
+        component="form" 
+        noValidate 
+        onSubmit={(e) => {
+          handleLogin(e, "google")
+        }} 
+        sx={{ mt: 1 }}
+      >  
+        <Button
+          fullWidth
+          type="submit"
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+          >
+          Sign In with Google
+        </Button>
+      </Box>
+    )
+  }
 
   return (
     <ThemeProvider theme={appTheme}>
@@ -85,53 +166,8 @@ export default function SignIn() {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box component="form" noValidate onSubmit={handleLogin} sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
-              <Copyright sx={{ mt: 5 }} />
-            </Box>
+            {/* <EmailPassword /> */}
+            <GoogleSignIn />
           </Box>
         </Grid>
       </Grid>

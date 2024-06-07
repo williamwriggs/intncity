@@ -15,6 +15,7 @@ import {
 import appTheme from '@/theme.js';
 import { ThemeProvider } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/auth/Hooks';
 
 function Copyright() {
   return (
@@ -29,13 +30,85 @@ function Copyright() {
   );
 }
 
+const AuthButton = () => {
+  const auth = useAuth()
+  const navigate = useRouter().push;
+  const [user, setUser] = useState(null)
+  const [connected, setConnected] = useState(false)
+
+  useEffect(() => {
+    console.log(connected)
+  }, [connected])
+
+  useEffect(() => {
+    if (auth) {
+      console.log(auth)
+    }
+    if (auth.user) {
+      console.log(auth.user)
+      setUser(auth.user)
+      console.log(auth.connected)
+      setConnected(auth.connected)
+    }
+  }, [auth])
+
+
+  // useEffect(() => {
+  //   console.log(auth)
+  //   console.log(connected)
+  // }, [connected])
+
+
+  return (
+    <>
+    { !connected ?
+      <Button 
+        color="secondary" 
+        type="button" 
+        size="large"
+        variant="contained"
+        sx={{
+          borderRadius: "0 0 0 5px",
+        }}
+        onClick={() => {
+          navigate("/login")
+        }}
+      >
+        Sign In
+      </Button>
+      :
+      <Button 
+        color="secondary" 
+        type="button" 
+        size="large"
+        variant="contained"
+        sx={{
+          borderRadius: "0 0 0 5px",
+        }}
+        onClick={() => {
+          navigate("/profile")
+        }}
+      >
+        My Account
+      </Button>
+    }
+    </>
+  )
+}
+
 export default function StartTreePlantingRequest() {
   let navigate = useRouter().push;  
   const [email, setEmail] = useLocalStorage("email", "");
+  const [emailValid, setEmailValid] = useState(false)
 
-  const handleChangeEmail = (event) => {
-    setEmail(event.target.value);
-  }
+  useEffect(() => {
+    setEmail("")
+  }, [])
+
+  useEffect(() => {
+    const emailChecker = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    setEmailValid(emailChecker.test(email))
+  }, [email])
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -70,19 +143,8 @@ export default function StartTreePlantingRequest() {
 
         <CssBaseline />
         <Grid item sm={12} md={8}>
-          <Grid align="right" color="transparent">
-            <Button 
-              color="secondary" 
-              type="button" 
-              size="large"
-              variant="contained"
-              sx={{
-                borderRadius: "0 0 0 5px",
-              }}
-              onClick={() => {
-                navigate("/login")
-              }}
-            >Sign In</Button>
+          <Grid item align="right" color="transparent">
+            <AuthButton />
           </Grid>
           <Box
               sx={{
@@ -108,7 +170,9 @@ export default function StartTreePlantingRequest() {
                   name="email"
                   autoComplete="email"
                   autoFocus
-                  onChange={handleChangeEmail}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                  }}
                   variant="standard" 
                   sx={{width: 400}}
                   value={email}
@@ -118,7 +182,7 @@ export default function StartTreePlantingRequest() {
                   size="large" 
                   variant="contained" 
                   color="secondary"
-                  disabled={email != ""}
+                  disabled={!emailValid}
                   sx={{width: 200, mt: 2, mb: 2}}>
                     Plant a Tree
                 </Button>
