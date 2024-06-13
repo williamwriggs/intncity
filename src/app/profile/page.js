@@ -14,12 +14,27 @@ import {
     Typography
 } from '@mui/material'
 import { useRouter } from "next/navigation";
+import getAuthToken from "@/auth/getAuthToken"
 
 export default function Profile() {
     const auth = useAuth();
     const [userInfo, setUserInfo] = useState()
     const redirect = useRouter().replace
     const navigate = useRouter().push
+
+    const url = '/api/test'
+
+    const authTest = async () => {
+        const token = await getAuthToken(auth.provider, url)
+
+        console.log(token)
+
+        await fetch(url, {
+            headers: {
+                "Authorization": token
+            }
+        })
+    }
 
 
     useEffect(() => {
@@ -36,7 +51,7 @@ export default function Profile() {
             const address = (await web3.eth.getAccounts())[0]
             console.log("account: " + address)
             console.log("signature: " + signature)
-            const recoveredAddress = await recover(auth.provider, "test", signature)
+            const recoveredAddress = await recover("test", signature)
             console.log("recovered address: " + recoveredAddress)
         }
 
@@ -99,6 +114,14 @@ export default function Profile() {
                     }}
                 >
                     <Typography component="h1" variant="h4" color="primary" pb={4}>Hi {userInfo?.name}!</Typography>
+                    <Button 
+                        variant="contained" 
+                        size="large" 
+                        color="secondary"
+                        onClick={authTest}
+                    >
+                        Test Auth
+                    </Button>
                     <Button 
                         variant="contained" 
                         size="large" 

@@ -15,7 +15,6 @@ import {
 import { useTreeList } from './airtable';
 import TreeIcon from '@/assets/tree.svg';
 
-
 export default function PlantSelector({onPlantSelectionChanged}) {
     const { plants: plants, fetchTreeList: fetchTreeList } = useTreeList();
     const [ isLoaded, setIsLoaded ] = useState(false);
