@@ -1,5 +1,4 @@
 import Web3 from "web3"
-import sign from "./sign"
 
 export default async function signedFetch(url, options = {}) {
 
@@ -26,7 +25,7 @@ export default async function signedFetch(url, options = {}) {
     let signerData
 
     switch(method) {
-        case "GET":  {
+        case "GET": {
             signerData = new URL(url, "http://localhost:3000").search + time
             break
         }
@@ -39,8 +38,12 @@ export default async function signedFetch(url, options = {}) {
     let signedData, address
 
     try {
-        signedData = await sign(provider, signerData)
-        address = (await web3.eth.getAccounts())[0]
+        address = (await web3.eth.getAccounts())[options.web3account || 0]
+        signedData = await web3.eth.personal.sign(
+            message,
+            fromAddress,
+            options.web3password || ""
+        )
     } catch(e) {
         console.error(e)
         error = new Error('error: unable to sign data or retrieve account, internal error')

@@ -1,12 +1,12 @@
 import recover from "../src/auth/recover"
 
-export default function authMiddleware(request, response) {
+export default function authMiddleware(request) {
 
     let authToken
     try {
         authToken = request.headers.authorization.split(' ')[1].split(".")
     } catch {
-        return ["invalid auth token", false]
+        return null
     }
     
     const address = authToken[0]
@@ -16,7 +16,8 @@ export default function authMiddleware(request, response) {
     const timeSinceSignature = Date.now() - time
 
     if (timeSinceSignature > 5000) {
-        return ["request time expired", false]
+        console.error('error: request signature expired')
+        return null
     }
 
     let signerString
@@ -38,8 +39,8 @@ export default function authMiddleware(request, response) {
 
 
     if (address === recoveredAddress) {
-        return [recoveredAddress, true]
+        return recoveredAddress
     }
 
-    return ["unable to match recovered address", false]
+    return null
 }

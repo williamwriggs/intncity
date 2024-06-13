@@ -3,12 +3,11 @@ import logMiddleware from "./logMiddleware"
 
 export default function useMiddleware(request, response) {
 
-    const [value, auth] = authMiddleware(request, response)
+    const auth = authMiddleware(request, response)
 
-    logMiddleware(request, response, auth, value)
+    logMiddleware(request, response, auth)
 
     return {
-        authValue: value,
         auth: auth
     }
 }

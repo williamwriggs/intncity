@@ -9,13 +9,8 @@ export default function logMiddleware(request, response, auth, value) {
         const finish = Date.now()
         const ms = finish - start
         const time = new Date(start).toJSON()
-        let authValue
-        if(!auth) {
-            authValue = "no-auth"
-        } else {
-            authValue = value
-        }
-        console.log(" ", method, status, endpoint, ms + "ms", time, ip, authValue )
+
+        console.log(" ", method, status, endpoint, ms + "ms", time, ip, auth || "no-auth" )
         send(message)
     }
 }
