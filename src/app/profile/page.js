@@ -14,7 +14,7 @@ import {
     Typography
 } from '@mui/material'
 import { useRouter } from "next/navigation";
-import getAuthToken from "@/auth/getAuthToken"
+import signedFetch from "@/auth/signedFetch"
 
 export default function Profile() {
     const auth = useAuth();
@@ -22,17 +22,15 @@ export default function Profile() {
     const redirect = useRouter().replace
     const navigate = useRouter().push
 
-    const url = '/api/test'
+    const url = 'http://localhost:3000/api/test?test=test'
 
     const authTest = async () => {
-        const token = await getAuthToken(auth.provider, url)
-
-        console.log(token)
-
-        await fetch(url, {
-            headers: {
-                "Authorization": token
-            }
+        await signedFetch(url, {
+            provider: auth,
+            method: "POST",
+            body: JSON.stringify({
+                test: "test"
+            })
         })
     }
 

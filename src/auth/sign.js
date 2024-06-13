@@ -3,12 +3,10 @@ import Web3 from "web3"
 
 export default async function sign(provider, message) {
     if(!provider) {
-        console.error("must pass in provider")
-        return
+        throw new Error("must pass in provider")
     }
     if(!message) {
-        console.error("must pass in message")
-        return
+        throw new Error("must pass in message")
     }
 
     const web3 = new Web3(provider);

@@ -1,16 +1,17 @@
 import recover from "../src/auth/recover"
 
 export default function authMiddleware(request, response) {
-    const authToken = request.headers.authorization?.split('.')
 
-    
-    if (authToken?.length !== 3) {
+    let authToken
+    try {
+        authToken = request.headers.authorization.split(' ')[1].split(".")
+    } catch {
         return ["invalid auth token", false]
     }
     
     const address = authToken[0]
-    const signature = authToken[1]
-    const time = authToken[2] || 0
+    const time = authToken[1] || 0
+    const signature = authToken[2]
 
     const timeSinceSignature = Date.now() - time
 
@@ -18,11 +19,27 @@ export default function authMiddleware(request, response) {
         return ["request time expired", false]
     }
 
-    const recoveredAddress = recover(request.url + time, signature)
+    let signerString
+
+    switch(request.method) {
+        case "GET": {
+            signerString = new URL(request.url, "http://localhost:3000").search + time
+            break
+        }
+
+        default: {
+            signerString = request.body + time
+            break
+        }
+
+    }
+
+    const recoveredAddress = recover(signerString, signature)
+
 
     if (address === recoveredAddress) {
         return [recoveredAddress, true]
     }
 
-    return ["invalid auth token", false]
+    return ["unable to match recovered address", false]
 }
