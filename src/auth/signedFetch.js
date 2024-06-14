@@ -40,8 +40,8 @@ export default async function signedFetch(url, options = {}) {
     try {
         address = (await web3.eth.getAccounts())[options.web3account || 0]
         signedData = await web3.eth.personal.sign(
-            message,
-            fromAddress,
+            signerData,
+            address,
             options.web3password || ""
         )
     } catch(e) {
