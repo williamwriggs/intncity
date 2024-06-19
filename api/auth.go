@@ -8,6 +8,14 @@ import (
 )
 
 func GET(w http.ResponseWriter, r *http.Request) {
-	str := middleware.AuthMiddleware()
-	fmt.Fprintf(w, "middleware used: %s", str)
+	acc, err := middleware.AuthMiddleware(r)
+
+	fmt.Println(acc)
+
+	if err != nil {
+		fmt.Println("error", err)
+		fmt.Fprintf(w, "error")
+	}
+
+	fmt.Fprintf(w, "middleware used: %s", acc)
 }

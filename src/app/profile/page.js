@@ -22,7 +22,7 @@ export default function Profile() {
     const redirect = useRouter().replace
     const navigate = useRouter().push
 
-    const url = 'http://localhost:3000/api/test?test=test'
+    const url = 'http://localhost:3000/api/auth?test=test'
 
     const authTest = async () => {
         await signedFetch(url, {

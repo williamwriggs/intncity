@@ -49,6 +49,9 @@ export default async function signedFetch(url, options = {}) {
         error = new Error('error: unable to sign data or retrieve account, internal error')
     }
 
+    delete options.web3password
+    delete options.web3account
+
     if(error !== undefined) {
         throw error
     }
