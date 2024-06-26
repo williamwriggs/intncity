@@ -22,14 +22,16 @@ export default function Profile() {
     const redirect = useRouter().replace
     const navigate = useRouter().push
 
-    const url = 'http://localhost:3000/api/auth?test=test'
+    const url = 'http://localhost:3000/api/account?test=test'
 
     const authTest = async () => {
+        console.log(url)
         await signedFetch(url, {
             provider: auth,
             method: "POST",
             body: JSON.stringify({
-                test: "test"
+                email: "peej@oleary.com",
+                name: "PJ O'Leary"
             })
         })
     }

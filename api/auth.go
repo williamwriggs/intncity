@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	"github.com/williamwriggs/intncity-treetoken/middleware"
+	"github.com/williamwriggs/intncity-treetoken/utils"
 )
 
-func GET(w http.ResponseWriter, r *http.Request) {
+func AuthHandler(w http.ResponseWriter, r *http.Request) {
 	acc, err := middleware.AuthMiddleware(r)
 
-	fmt.Println(acc)
+	utils.GetAccount()
 
 	if err != nil {
 		fmt.Println("error", err)
