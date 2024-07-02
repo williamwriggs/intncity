@@ -57,6 +57,9 @@ func AuthMiddleware(r *http.Request) (string, error) {
 
 		queryString := r.URL.RawQuery
 		signer = fmt.Sprintf("?%s%s", queryString, time)
+		if queryString == "" {
+			signer = time
+		}
 
 	default:
 

@@ -5,59 +5,75 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/williamwriggs/intncity-treetoken/middleware"
+	"github.com/williamwriggs/intncity-treetoken/structs"
 	"github.com/williamwriggs/intncity-treetoken/utils"
 )
-
-type PostAccount struct {
-	Email string `json:"email"`
-	Name  string `json:"name"`
-}
 
 func AccountHandler(w http.ResponseWriter, r *http.Request) {
 	address, err := middleware.AuthMiddleware(r)
 	if err != nil {
+		fmt.Println(err)
 		w.WriteHeader(http.StatusUnauthorized)
+		return
 	}
 
 	switch r.Method {
 	case "POST":
+		acc, err := utils.GetAccount(address)
+		if err != nil {
+			fmt.Println("error in getAccount before post:", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if acc != nil {
+			w.WriteHeader(http.StatusConflict)
+			return
+		}
+
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			fmt.Printf("error reading request body: %s\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
 		}
 
-		accountInfo := PostAccount{}
+		accountInfo := structs.PostAccount{}
 
 		json.Unmarshal(body, &accountInfo)
 
-		name := strings.Split(accountInfo.Name, " ")
-
-		var firstName, lastName string
-
-		if len(name) > 0 {
-			firstName = name[0]
-		}
-
-		if len(name) > 1 {
-			lastName = name[1]
-		} else {
-			lastName = ""
-		}
-
-		err = utils.PostAccount(address, accountInfo.Email, firstName, lastName)
+		err = utils.PostAccount(address, accountInfo.Email, accountInfo.Name)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
-
-		fmt.Println(address, accountInfo.Email, firstName, lastName)
 
 		w.WriteHeader(http.StatusOK)
 	case "GET":
+		account, err := utils.GetAccount(address)
+		if err != nil {
+			fmt.Println("error getting account:", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
+		if account == nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(`"no account found"`))
+			return
+		}
+
+		body, err := json.Marshal(account)
+		if err != nil {
+			fmt.Println("error marshalling account:", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.Write(body)
 	default:
 		w.WriteHeader(405)
 	}

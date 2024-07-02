@@ -11,12 +11,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func PostAccount(address, email, firstName, lastName string) error {
+func PostAccount(address, email, name string) error {
+	t := time.Now()
 	godotenv.Load("../../../../.env.local")
-
-	if lastName == "" {
-		lastName = "not given"
-	}
 
 	body := bytes.NewReader([]byte(fmt.Sprintf(`{
 		"records": [
@@ -24,12 +21,11 @@ func PostAccount(address, email, firstName, lastName string) error {
 				"fields": {
 					"address": "%s",
 					"email": "%s",
-					"first_name": "%s",
-					"last_name": "%s"
+					"name": "%s"
 				}
 			}
 		]
-	}`, address, email, firstName, lastName)))
+	}`, address, email, name)))
 
 	url := fmt.Sprintf("https://api.airtable.com/v0/%s/%s",
 		os.Getenv("AIRTABLE_BASE_ID"), os.Getenv("AIRTABLE_AUTH_TABLE_ID"))
@@ -69,5 +65,6 @@ func PostAccount(address, email, firstName, lastName string) error {
 	}
 	fmt.Println(res.Status, string(resBody))
 
+	fmt.Println("post time: ", time.Since(t))
 	return nil
 }

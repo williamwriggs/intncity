@@ -10,13 +10,23 @@ import (
 
 func AuthHandler(w http.ResponseWriter, r *http.Request) {
 	acc, err := middleware.AuthMiddleware(r)
-
-	utils.GetAccount()
-
 	if err != nil {
-		fmt.Println("error", err)
-		fmt.Fprintf(w, "error")
+		fmt.Println("error using auth middleware:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	fmt.Fprintf(w, "middleware used: %s", acc)
+	account, err := utils.GetAccount(acc)
+	if err != nil {
+		fmt.Println("error getting account:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if account == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	w.Write([]byte(fmt.Sprintf(`"%s"`, account.Fields.AuthLevel)))
 }
