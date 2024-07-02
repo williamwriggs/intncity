@@ -12,7 +12,6 @@ import (
 )
 
 func PostAccount(address, email, name string) error {
-	t := time.Now()
 	godotenv.Load("../../../../.env.local")
 
 	body := bytes.NewReader([]byte(fmt.Sprintf(`{
@@ -41,8 +40,6 @@ func PostAccount(address, email, name string) error {
 
 	key := os.Getenv("AIRTABLE_KEY")
 
-	fmt.Println("key: ", key)
-
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", key))
 
@@ -50,21 +47,17 @@ func PostAccount(address, email, name string) error {
 		Timeout: time.Second * 10,
 	}
 
-	fmt.Println(req.Header)
-
 	res, err := client.Do(req)
 	if err != nil {
 		err = fmt.Errorf("error sending post account request: %s", err)
 		return err
 	}
 
-	resBody, err := io.ReadAll(res.Body)
+	_, err = io.ReadAll(res.Body)
 	if err != nil {
 		err = fmt.Errorf("error sending post account request: %s", err)
 		return err
 	}
-	fmt.Println(res.Status, string(resBody))
 
-	fmt.Println("post time: ", time.Since(t))
 	return nil
 }

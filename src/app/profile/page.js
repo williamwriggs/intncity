@@ -28,11 +28,11 @@ export default function Profile() {
         console.log(url)
         const res = await signedFetch(url, {
             provider: auth,
-            method: "GET",
-            // body: JSON.stringify({
-            //     email: userInfo?.email,
-            //     name: userInfo?.name
-            // })
+            method: "POST",
+            body: JSON.stringify({
+                email: userInfo?.email,
+                name: userInfo?.name
+            })
         })
 
         console.log(await res.json())
