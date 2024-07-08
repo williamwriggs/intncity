@@ -4,6 +4,7 @@ import { Web3AuthNoModal } from  "@web3auth/no-modal"
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
 import { LOGIN_PROVIDER, OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import postAccount from "./postAccount";
 
 const AuthContext = createContext(null);
 
@@ -61,6 +62,20 @@ export const AuthProvider = ({ children }) => {
 
     init()
   }, [])
+
+  useEffect(() => {
+    const post = async () => {
+      const info = await user?.getUserInfo()
+      console.log("info: ", info)
+      if(info?.name && info?.email) {
+        await postAccount(info.name, info.email, provider)
+      }
+    }
+
+    if(connected) {
+      post()
+    }
+  }, [connected])
 
   // call this function when you want to authenticate the user
   const Login = async (method, params) => {

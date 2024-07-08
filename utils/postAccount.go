@@ -12,7 +12,7 @@ import (
 )
 
 func PostAccount(address, email, name string) error {
-	godotenv.Load("../../../../.env.local")
+	godotenv.Load("../../../../.env")
 
 	body := bytes.NewReader([]byte(fmt.Sprintf(`{
 		"records": [
@@ -28,8 +28,6 @@ func PostAccount(address, email, name string) error {
 
 	url := fmt.Sprintf("https://api.airtable.com/v0/%s/%s",
 		os.Getenv("AIRTABLE_BASE_ID"), os.Getenv("AIRTABLE_AUTH_TABLE_ID"))
-
-	fmt.Println(url)
 
 	req, err := http.NewRequest(http.MethodPost, url, body)
 

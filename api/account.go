@@ -13,7 +13,7 @@ import (
 
 func AccountHandler(w http.ResponseWriter, r *http.Request) {
 	address, err := middleware.AuthMiddleware(r)
-	if err != nil {
+	if err != nil || address == "" {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -42,7 +42,17 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 
 		accountInfo := structs.PostAccount{}
 
-		json.Unmarshal(body, &accountInfo)
+		err = json.Unmarshal(body, &accountInfo)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if accountInfo.Name == "" || accountInfo.Email == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 
 		err = utils.PostAccount(address, accountInfo.Email, accountInfo.Name)
 		if err != nil {

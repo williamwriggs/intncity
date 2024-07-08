@@ -13,7 +13,7 @@ import (
 )
 
 func GetAccount(address string) (*structs.AccountRecord, error) {
-	godotenv.Load("../../../../.env.local")
+	godotenv.Load("../../../../.env")
 
 	baseId := os.Getenv("AIRTABLE_BASE_ID")
 	key := os.Getenv("AIRTABLE_KEY")
@@ -35,8 +35,6 @@ func GetAccount(address string) (*structs.AccountRecord, error) {
 	query := req.URL.Query()
 	query.Add("filterByFormula", filter)
 	req.URL.RawQuery = query.Encode()
-
-	fmt.Println(req.URL.RawQuery)
 
 	client := http.Client{
 		Timeout: time.Second * 10,
@@ -64,8 +62,6 @@ func GetAccount(address string) (*structs.AccountRecord, error) {
 	}
 
 	var record *structs.AccountRecord
-
-	fmt.Println(records)
 
 	switch len(records.Records) {
 	case 0:

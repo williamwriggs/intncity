@@ -22,7 +22,7 @@ export default function Profile() {
     const redirect = useRouter().replace
     const navigate = useRouter().push
 
-    const url = 'http://localhost:3000/api/account'
+    const url = 'http://localhost:3000/api/test'
 
     const authTest = async () => {
         console.log(url)

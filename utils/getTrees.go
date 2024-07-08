@@ -11,7 +11,7 @@ import (
 )
 
 func GetTrees() (*sheets.ValueRange, error) {
-	godotenv.Load("../../../../.env.local")
+	godotenv.Load("../../../../.env")
 
 	ctx := context.Background()
 
