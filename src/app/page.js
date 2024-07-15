@@ -96,19 +96,8 @@ const AuthButton = () => {
 
 export default function StartTreePlantingRequest() {
   let navigate = useRouter().push;
-  const [email, setEmail] = useLocalStorage("email", "");
-  const [emailValid, setEmailValid] = useState(false);
   const auth = useAuth();
 
-  useEffect(() => {
-    setEmail("");
-  }, []);
-
-  useEffect(() => {
-    const emailChecker =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    setEmailValid(emailChecker.test(email));
-  }, [email]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
