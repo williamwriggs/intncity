@@ -1,8 +1,8 @@
 "use client"
-import { useAuth } from "@/auth/Hooks"
-import sign from "@/auth/sign"
-import recover from "@/auth/recover"
-import Web3 from "web3"
+import { useAuth } from "@/auth/Hooks";
+import sign from "@/auth/sign";
+import recover from "@/auth/recover";
+import Web3 from "web3";
 import appTheme from '@/theme.js';
 import { useState, useEffect } from 'react'
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,9 +12,9 @@ import {
     Button,
     Box,
     Typography
-} from '@mui/material'
+} from '@mui/material';
 import { useRouter } from "next/navigation";
-import signedFetch from "@/auth/signedFetch"
+import signedFetch from "@/auth/signedFetch";
 
 export default function Profile() {
     const auth = useAuth();
@@ -22,18 +22,28 @@ export default function Profile() {
     const redirect = useRouter().replace
     const navigate = useRouter().push
 
-    const url = 'http://localhost:3000/api/test'
+    const url = 'http://localhost:3000/api/trees'
+    // const url = 'http://localhost:3000/api/auth'
 
     const authTest = async () => {
         console.log(url)
         const res = await signedFetch(url, {
             provider: auth,
-            method: "POST",
-            body: JSON.stringify({
-                email: userInfo?.email,
-                name: userInfo?.name
-            })
+            method: "GET",
+            // body: JSON.stringify({
+            //     email: userInfo?.email,
+            //     name: userInfo?.name
+            // })
         })
+
+        // const res = await signedFetch(url, {
+        //     provider: auth,
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //         email: userInfo?.email,
+        //         name: userInfo?.name
+        //     })
+        // })
 
         console.log(await res.json())
     }
@@ -112,18 +122,19 @@ export default function Profile() {
                     mx: 6,
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
+                    alignItems: 'center'
                     }}
                 >
                     <Typography component="h1" variant="h4" color="primary" pb={4}>Hi {userInfo?.name}!</Typography>
-                    <Button 
+                    <Typography component="h6" variant="h6" color="primary" pb={4}>{userInfo?.email}</Typography>
+                    {/* <Button 
                         variant="contained" 
                         size="large" 
                         color="secondary"
                         onClick={authTest}
                     >
                         Test Auth
-                    </Button>
+                    </Button> */}
                     <Button 
                         variant="contained" 
                         size="large" 
