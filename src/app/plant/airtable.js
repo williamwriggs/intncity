@@ -52,10 +52,7 @@ export async function createTreePlantingRequest(pr) {
       "fields": {
         "Request ID": requestId,
         "Request Date": Date.now(),
-        "Requestor Email": pr.email,
-        "Requested Tree": [
-          pr.treeid
-        ],
+        "Requested Tree": pr.treeid,
         "Location Longitude": pr.longitude,
         "Location Latitude": pr.latitude,
         "Questions": pr.questions,
