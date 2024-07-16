@@ -66,10 +66,10 @@ const AuthButton = () => {
           size="large"
           variant="contained"
           sx={{
-            borderRadius: "0 0 0 5px",
+            borderRadius: "5px",
           }}
           onClick={() => {
-            navigate("/login");
+            auth.Login("google")
           }}
         >
           Sign In
