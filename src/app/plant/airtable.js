@@ -1,48 +1,71 @@
-import { useState }  from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import Airtable from 'airtable';
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import Airtable from "airtable";
 
-const API_KEY = 'keyXYRXQVx9uUgYSX';
-const BASE_ID = 'appTdrMAIaYDa7one';
+const API_KEY = "keyXYRXQVx9uUgYSX";
+const BASE_ID = "appTdrMAIaYDa7one";
 
 Airtable.configure({
-    endpointUrl: 'https://api.airtable.com',
-    apiKey: API_KEY
+  endpointUrl: "https://api.airtable.com",
+  apiKey: API_KEY,
 });
 const base = Airtable.base(BASE_ID);
 
 // Custom React Hook for fetching Tree List from Airtable
 export function useTreeList() {
-    const [treeList, setTreeList] = useState(null);
-   
-    const fetchTreeList = async () => {
-      return base('Tree List').select({
+  const [treeList, setTreeList] = useState(null);
+
+  const fetchTreeList = async () => {
+    return base("Tree List")
+      .select({
         maxRecords: 500,
-        view: "Grid view"
-      }).eachPage(function page(records, fetchNextPage) {
+        view: "Grid view",
+      })
+      .eachPage(
+        function page(records, fetchNextPage) {
           // This function (`page`) will get called for each page of records.
           const transformed = records.map((p) => {
             return {
-                id: p.id,
-                approved: p.fields['Approved Street Tree'] == 'Yes',
-                name: p.fields['Common Name'],
-                botanical: p.fields['Botanical Name*'],
-                minTreeWellSize: p.fields['Minimum Tree-Well Size'],
-                height: p.fields['Approximate Height'],
-                foliage: p.fields['Foliage (Deciduous or Evergreen) '],
-                image: p.fields['Image'] ? p.fields['Image'][0].url : null,
-                notes: p.fields['Notes'],
-            };              
+              id: p.id,
+              approved: p.fields["Approved Street Tree"] == "Yes",
+              name: p.fields["Common Name"],
+              botanical: p.fields["Botanical Name*"],
+              minTreeWellSize: p.fields["Minimum Tree-Well Size"],
+              height: p.fields["Approximate Height"],
+              foliage: p.fields["Foliage (Deciduous or Evergreen) "],
+              image: p.fields["Image"] ? p.fields["Image"][0].url : null,
+              notes: p.fields["Notes"],
+            };
           });
-          
-          setTreeList(transformed);
 
-      }, function done(err) {
-          if (err) { console.error(err); return; }
-      });
-    }
-    
-    return { fetchTreeList, plants: treeList }
+          setTreeList(transformed);
+        },
+        function done(err) {
+          if (err) {
+            console.error(err);
+            return;
+          }
+        }
+      );
+  };
+
+  return { fetchTreeList, plants: treeList };
+}
+
+export function useTreeListNew() {
+  const [treeList, setTreeList] = useState(null);
+  const url = "http://localhost:3000/api/trees";
+
+  const fetchTreeList = async () => {
+    const res = await fetch(url, {
+      method: "GET",
+    });
+    const trees = await res.json();
+    console.log("trees", trees);
+    setTreeList(trees);
+  };
+
+  return { fetchTreeList, plants: treeList };
 }
 
 export async function createTreePlantingRequest(pr) {
@@ -73,4 +96,3 @@ export async function createTreePlantingRequest(pr) {
   });
   return requestId;
 }
-
