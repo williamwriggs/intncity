@@ -17,7 +17,7 @@ func GetTrees() (*sheets.ValueRange, error) {
 
 	credentials := "../../../../secrets/tree-app-google-service-key.json"
 	id := os.Getenv("GOOGLE_SHEETS_ID")
-	readRange := "Inventory List!B1:C200"
+	readRange := "Inventory List!A1:C200"
 
 	sheetsService, err := sheets.NewService(ctx, option.WithCredentialsFile(credentials), option.WithScopes(sheets.SpreadsheetsReadonlyScope))
 	if err != nil {

@@ -24,6 +24,7 @@ import TreeAttributesForm from './Step1TreeAttributes';
 import LocationForm from './Step2Location';
 import Review from './Step3Review';
 import ImageCarousel from './ImageCarousel';
+import { useAuth } from '@/auth/Hooks';
 
 function Copyright() {
   return (
@@ -47,6 +48,7 @@ const EAST_OAKLAND = {lat: 37.755443,lng: -122.184389};
 
 
 export default function PlantingRequestForm() {
+  const auth = useAuth()
   const navigate = useRouter().push;   
   const [activeStep, setActiveStep] = useLocalStorage("appStep", 0);  
   const [email] = useLocalStorage("email", "");  
@@ -116,7 +118,8 @@ export default function PlantingRequestForm() {
 
     if (key === "tree") {
       setTree(value);    
-      console.log("tree = ", value.name);      
+      console.log(value)
+      // console.log("tree = ", value.name);      
     }
   }
 
@@ -151,7 +154,7 @@ export default function PlantingRequestForm() {
         address: address,
         latitude: location.lat,
         longitude: location.lng,
-        treeid: tree.id,
+        tree: tree,
         quantity: 1,
         questions: questions,
         images: images
@@ -159,7 +162,7 @@ export default function PlantingRequestForm() {
       console.log("Tree request: " + JSON.stringify(pr));
 
       // Create request in Airtable
-      let requestId = await createTreePlantingRequest(pr);
+      let requestId = await createTreePlantingRequest([pr], auth.provider);
 
       // Send confirmation email
       const shortId = requestId.slice(0, 4);

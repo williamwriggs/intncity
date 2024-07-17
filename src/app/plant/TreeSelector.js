@@ -27,8 +27,9 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
   }, []);
 
   function handlePlantSelectionChange(event, value, reason) {
+    console.log(plants)
     let selection = value;
-    // let selections =  plants.filter(p => p.sku == value);
+    console.log(selection)
     // console.log("Product selection: " + JSON.stringify(selection[0]));
 
     onPlantSelectionChanged(selection);
@@ -48,12 +49,7 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
                 autoHighlight
                 getOptionLabel={(option) => option.name}
                 renderOption={(props, option) => (
-                  <li {...props} key={option.name}>
-                    <Avatar
-                      variant="rounded"
-                      src={option.image ? option.image : TreeIcon}
-                      sx={{ m: 1, width: 32, height: 32 }}
-                    />
+                  <li {...props} key={option.name} value={option}>
                     {option.name}
                   </li>
                 )}

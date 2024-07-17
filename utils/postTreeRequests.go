@@ -1,8 +1,12 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,6 +16,10 @@ import (
 
 func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 	godotenv.Load("../../../../.env")
+
+	fmt.Println("=======REQUESTS========")
+	fmt.Println(len(requests))
+	fmt.Println(requests[len(requests)-1])
 
 	acc, err := GetAccount(address)
 	if err != nil {
@@ -36,8 +44,6 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 
 		request.RequestId = id.String()
 
-		request.RequestDate = time.Now()
-
 		request.Requestor = address
 
 		for _, image := range request.Images {
@@ -58,7 +64,40 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 		return err
 	}
 
-	fmt.Println(body)
+	fmt.Println(string(body))
+
+	url := fmt.Sprintf("https://api.airtable.com/v0/%s/%s",
+		os.Getenv("AIRTABLE_BASE_ID"), os.Getenv("AIRTABLE_TREE_REQUESTS_TABLE_ID"))
+
+	b := bytes.NewReader(body)
+
+	req, err := http.NewRequest(http.MethodPost, url, b)
+
+	if err != nil {
+		err = fmt.Errorf("error creating post account request: %s", err)
+		return err
+	}
+
+	key := os.Getenv("AIRTABLE_KEY")
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", key))
+
+	client := http.Client{
+		Timeout: time.Second * 10,
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		err = fmt.Errorf("error sending tree request: %s", err)
+		return err
+	}
+
+	_, err = io.ReadAll(res.Body)
+	if err != nil {
+		err = fmt.Errorf("error sending tree request: %s", err)
+		return err
+	}
 
 	return nil
 }

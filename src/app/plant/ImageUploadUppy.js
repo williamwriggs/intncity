@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocalStorage } from "@/utilities/useLocalStorage";
 import Uppy from '@uppy/core';
 import Tus from '@uppy/tus';
@@ -12,8 +12,13 @@ import '@uppy/core/dist/style.css';
 import '@uppy/webcam/dist/style.css'
 
 export default function UppyUploadWidget() {
-  const [images, setImages] = useLocalStorage("images");
+  const [images, setImages] = useLocalStorage("images", []);
   const [uppy, setUppy] = useState();
+  const [attachments, setAttachments] = useState({})
+
+  useEffect(() => {
+    console.log(images)
+  }, [images])
 
   React.useEffect(() => {
     const uppy = new Uppy({
@@ -65,14 +70,11 @@ export default function UppyUploadWidget() {
   if (!uppy) {
     return ("loading...");
   }
-  uppy.on('complete', (result) => {
-      const attachments = [];
-      result.successful.forEach(item => {
-        attachments.push({url: item.uploadURL});
-      });
-
-      console.log("Image attachments: ", JSON.stringify(attachments));
-      setImages(attachments); 
+  uppy.on('upload-success', (file, response) => {
+    attachments[response.uploadURL] = true
+    console.log(attachments)
+    setAttachments(attachments)
+    setImages(Object.keys(attachments))
   });
 
   return (
@@ -81,7 +83,11 @@ export default function UppyUploadWidget() {
         plugins={["Webcam", "ImageEditor", "FileInput"]}
         uppy={uppy}
         width={'100%'}
-        doneButtonHandler={null}
+        doneButtonHandler={() => {
+          uppy.cancelAll()
+          setAttachments({})
+          setImages([])
+        }}
         proudlyDisplayPoweredByUppy={false}
       />
   )

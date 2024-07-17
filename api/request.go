@@ -30,7 +30,10 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = json.Unmarshal(body, requests)
+		fmt.Println("=============BODY===========")
+		fmt.Println(string(body))
+
+		err = json.Unmarshal(body, &requests)
 		if err != nil {
 			fmt.Println("error unmarshalling body:", err)
 			w.WriteHeader(http.StatusBadRequest)
@@ -45,6 +48,16 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusCreated)
+
+	case "GET":
+		url := "https://www.ottergeospatial.info/wp-content/uploads/2019/08/IMG_0022_01-816w.jpg"
+		lat, long, err := utils.ParseImageLocation(url)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		fmt.Println(lat, long)
 
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
