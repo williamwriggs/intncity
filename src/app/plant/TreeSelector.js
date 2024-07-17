@@ -35,11 +35,47 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
     onPlantSelectionChanged(selection);
   }
 
+  const AddTreeButton = () => {
+    const [currentTrees, setCurrentTrees] = useState([]);
+  
+    const newTree = {
+      name: null,
+      category: null,
+      longitude: null,
+      latitude: null,
+      questions: null,
+      images: null,
+      address: null
+    };
+  
+    const handleAddTree = () => {
+      setCurrentTrees([...currentTrees, newTree]);
+    };
+  
+    return (
+      <>
+        <Button
+          color="secondary"
+          type="button"
+          size="large"
+          variant="contained"
+          sx={{
+            borderRadius: "0 0 0 5px",
+          }}
+          onClick={handleAddTree}
+        >
+          +
+        </Button>
+      </>
+    );
+  };
+
   return (
     <Paper sx={{ padding: 4 }}>
       <Grid container spacing={2}>
         <Grid xs={12} item>
           <Typography variant="h6">Tree species</Typography>
+          <AddTreeButton/>
         </Grid>
         {isLoaded ? (
           <React.Fragment>
