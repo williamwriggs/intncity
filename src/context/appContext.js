@@ -5,13 +5,16 @@ const AppContext = createContext(null)
 
 export const AppContextProvider = ({ children }) => {
     const [treeList, setTreeList] = useState([])
+    const [currentTrees, setCurrentTrees] = useState([])
 
     const value = useMemo(() => {
         return {
             treeList,
-            setTreeList
+            setTreeList,
+            currentTrees,
+            setCurrentTrees
         }
-    })
+    }, [])
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
@@ -19,3 +22,5 @@ export const AppContextProvider = ({ children }) => {
 export const useAppContext = () => {
     return useContext(AppContext)
 }
+
+// Tree Structure:
