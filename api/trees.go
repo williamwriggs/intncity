@@ -13,6 +13,7 @@ import (
 type Tree struct {
 	Name     string `json:"name"`
 	Quantity int    `json:"quantity"`
+	Category string `json:"category"`
 }
 
 func TreesHandler(w http.ResponseWriter, r *http.Request) {
@@ -29,10 +30,20 @@ func TreesHandler(w http.ResponseWriter, r *http.Request) {
 		currentTrees := make(map[string]bool)
 
 		if len(rows.Values) > 0 {
-			for _, row := range rows.Values {
-				if len(row) == 2 {
-					name, ok1 := row[0].(string)
-					q, ok2 := row[1].(string)
+			currentCategory := ""
+			for n, row := range rows.Values {
+				if n > 1 {
+					cat, ok := row[0].(string)
+					if ok {
+						if strings.ReplaceAll(cat, " ", "") != "" {
+							currentCategory = cat
+						}
+					}
+					if len(row) < 3 {
+						continue
+					}
+					name, ok1 := row[1].(string)
+					q, ok2 := row[2].(string)
 
 					var quantity int
 
@@ -48,7 +59,7 @@ func TreesHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 					if ok1 && ok2 && quantity != 0 {
-						tree := Tree{Name: name, Quantity: quantity}
+						tree := Tree{Name: name, Quantity: quantity, Category: currentCategory}
 						trees = append(trees, tree)
 						currentTrees[strings.ToLower(name)] = true
 					}

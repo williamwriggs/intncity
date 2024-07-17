@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Airtable from "airtable";
+import signedFetch from "@/auth/signedFetch";
+import { useAppContext } from "@/context/appContext";
 
 const API_KEY = "keyXYRXQVx9uUgYSX";
 const BASE_ID = "appTdrMAIaYDa7one";
@@ -53,50 +55,53 @@ export function useTreeList() {
 }
 
 export function useTreeListNew() {
-  const [treeList, setTreeList] = useState(null);
+  const {treeList, setTreeList} = useAppContext();
   const url = "http://localhost:3000/api/trees";
 
   const fetchTreeList = async () => {
-    const res = await fetch(url, {
-      method: "GET",
-    });
-    const trees = await res.json();
-    console.log("trees", trees);
-    setTreeList(trees);
+    if(!treeList.length) {
+      const res = await fetch(url, {
+        method: "GET",
+      });
+      const trees = await res.json();
+      setTreeList(trees);
+    }
   };
 
   return { fetchTreeList, plants: treeList };
 }
 
-export async function createTreePlantingRequest(pr) {
-  let requestId = uuidv4();
-  base("Tree Request").create(
-    [
-      {
-        fields: {
-          "Request ID": requestId,
-          "Request Date": Date.now(),
-          "Requestor Email": pr.email,
-          "Requested Tree": [pr.treeid],
-          "Location Longitude": pr.longitude,
-          "Location Latitude": pr.latitude,
-          Questions: pr.questions,
-          Status: "Request Received",
-          "Location Image": pr.images,
-        },
-      },
-    ],
-    function (err, records) {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      let appId = "";
-      records?.forEach(function (record) {
-        appId = record.fields["Request ID"];
-        console.log("Created request ID: " + appId);
-      });
+export async function createTreePlantingRequest(prs, provider) {
+  if(prs.length === 0) throw new Error("no requests given")
+  
+  let requests = []
+
+  for (const pr of prs) {
+    const formatted = {
+      "Request Date": Date.now(),
+      "Requested Tree": pr.tree.name,
+      "Tree Category": pr.tree.category,
+      "Location Longitude": pr.longitude,
+      "Location Latitude": pr.latitude,
+      "Questions": pr.questions,
+      "Status": "Request Received",
+      "Images": pr.images,
+      "Location Address": pr.address
     }
-  );
-  return requestId;
+
+    requests.push(formatted)
+  }
+
+  console.log("requests")
+  console.log(requests)
+
+
+  const res = await signedFetch("/api/request", {
+    method: "POST",
+    provider,
+    body: JSON.stringify(requests)
+  }).catch(console.error)
+
+
+  return 'request succeeded';
 }
