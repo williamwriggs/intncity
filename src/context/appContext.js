@@ -1,11 +1,12 @@
 "use client"
+import { useLocalStorage } from "@/utilities/useLocalStorage"
 import { createContext, useContext, useMemo, useState } from "react"
 
 const AppContext = createContext(null)
 
 export const AppContextProvider = ({ children }) => {
     const [treeList, setTreeList] = useState([])
-    const [currentTrees, setCurrentTrees] = useState([])
+    const [currentTrees, setCurrentTrees] = useLocalStorage("currentTrees", [])
 
     const value = useMemo(() => {
         return {
