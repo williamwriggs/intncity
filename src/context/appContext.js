@@ -14,7 +14,7 @@ export const AppContextProvider = ({ children }) => {
             currentTrees,
             setCurrentTrees
         }
-    }, [])
+    }, [treeList, currentTrees])
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }

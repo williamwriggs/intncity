@@ -59,11 +59,14 @@ export function useTreeListNew() {
   const url = "http://localhost:3000/api/trees";
 
   const fetchTreeList = async () => {
+    console.log(treeList.length)
     if(!treeList.length) {
+      console.log("fetching tree list")
       const res = await fetch(url, {
         method: "GET",
       });
       const trees = await res.json();
+      console.log(trees)
       setTreeList(trees);
     }
   };
