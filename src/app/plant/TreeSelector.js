@@ -7,17 +7,18 @@ import {
   CircularProgress,
   Grid,
   Paper,
-  Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
 
-import { useTreeList, useTreeListNew } from "./airtable";
+import { useTreeListNew } from "./airtable";
 import TreeIcon from "@/assets/tree.svg";
 
 export default function PlantSelector({ onPlantSelectionChanged }) {
-  const { plants: plants, fetchTreeList: fetchTreeList } = useTreeListNew();
+  const { plants, fetchTreeList } = useTreeListNew();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [currentTrees, setCurrentTrees] = useState([]);
+  
   useEffect(() => {
     async function onInitialize() {
       await fetchTreeList();
@@ -26,18 +27,14 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
     onInitialize();
   }, []);
 
-  function handlePlantSelectionChange(event, value, reason) {
-    console.log(plants)
-    let selection = value;
-    console.log(selection)
-    // console.log("Product selection: " + JSON.stringify(selection[0]));
-
-    onPlantSelectionChanged(selection);
-  }
+  const handlePlantSelectionChange = (event, newValue, index) => {
+    const updatedTrees = [...currentTrees];
+    updatedTrees[index] = { ...updatedTrees[index], name: newValue.name };
+    setCurrentTrees(updatedTrees);
+    onPlantSelectionChanged(updatedTrees);
+  };
 
   const AddTreeButton = () => {
-    const [currentTrees, setCurrentTrees] = useState([]);
-  
     const newTree = {
       name: null,
       category: null,
@@ -45,28 +42,59 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
       latitude: null,
       questions: null,
       images: null,
-      address: null
+      address: null,
     };
-  
+
     const handleAddTree = () => {
       setCurrentTrees([...currentTrees, newTree]);
     };
-  
+
+    console.log("CURRENT TREES", currentTrees);
+
     return (
-      <>
-        <Button
-          color="secondary"
-          type="button"
-          size="large"
-          variant="contained"
-          sx={{
-            borderRadius: "0 0 0 5px",
-          }}
-          onClick={handleAddTree}
-        >
-          +
-        </Button>
-      </>
+      <Button
+        color="secondary"
+        type="button"
+        size="large"
+        variant="contained"
+        sx={{
+          borderRadius: "0 0 0 5px",
+        }}
+        onClick={handleAddTree}
+      >
+        +
+      </Button>
+    );
+  };
+
+  const TreeDropdowns = () => {
+    return (
+      <React.Fragment>
+        {currentTrees.map((tree, index) => (
+          <Grid xs={12} item key={index}>
+            <Autocomplete
+              options={plants || [{ name: "tree" }]}
+              autoHighlight
+              getOptionLabel={(option) => option.name}
+              renderOption={(props, option) => (
+                <li {...props} key={option.name} value={option}>
+                  {option.name}
+                </li>
+              )}
+              renderInput={(params) => (
+                <TextField
+                  variant="outlined"
+                  {...params}
+                  inputProps={{
+                    ...params.inputProps,
+                  }}
+                />
+              )}
+              onChange={(event, newValue) => handlePlantSelectionChange(event, newValue, index)}
+            />
+          </Grid>
+        ))}
+      </React.Fragment>
     );
   };
 
@@ -75,33 +103,10 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
       <Grid container spacing={2}>
         <Grid xs={12} item>
           <Typography variant="h6">Tree species</Typography>
-          <AddTreeButton/>
+          <AddTreeButton />
         </Grid>
         {isLoaded ? (
-          <React.Fragment>
-            <Grid xs={12} item>
-              <Autocomplete
-                options={plants || ["tree"]}
-                autoHighlight
-                getOptionLabel={(option) => option.name}
-                renderOption={(props, option) => (
-                  <li {...props} key={option.name} value={option}>
-                    {option.name}
-                  </li>
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    variant="outlined"
-                    {...params}
-                    inputProps={{
-                      ...params.inputProps,
-                    }}
-                  />
-                )}
-                onChange={handlePlantSelectionChange}
-              />
-            </Grid>
-          </React.Fragment>
+          <TreeDropdowns />
         ) : (
           <Grid item xs={12}>
             <Backdrop
