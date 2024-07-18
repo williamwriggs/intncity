@@ -117,8 +117,8 @@ export default function PlantingRequestForm() {
     }
 
     if (key === "tree") {
-      setTree(value);    
-      console.log(value)
+      setTree(value[0]);    
+      console.log("tree value", value[0])
       // console.log("tree = ", value.name);      
     }
   }

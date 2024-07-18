@@ -49,16 +49,6 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusCreated)
 
-	case "GET":
-		url := "https://www.ottergeospatial.info/wp-content/uploads/2019/08/IMG_0022_01-816w.jpg"
-		lat, long, err := utils.ParseImageLocation(url)
-		if err != nil {
-			fmt.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		fmt.Println(lat, long)
-
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}

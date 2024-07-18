@@ -32,7 +32,9 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 		authLevel = "none"
 	}
 
-	for n, request := range requests {
+	postObject := structs.TreePostObject{}
+
+	for _, request := range requests {
 
 		if authLevel == "none" {
 			request.Status = "Requested"
@@ -44,10 +46,10 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 
 		request.RequestId = id.String()
 
-		request.Requestor = address
+		request.Requestor = append(request.Requestor, acc.Id)
 
 		for _, image := range request.Images {
-			lat, long, err := ParseImageLocation(image)
+			lat, long, err := ParseImageLocation(image.Url)
 			if err != nil {
 				fmt.Println("error parsing image location:", err)
 			} else {
@@ -56,10 +58,12 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 			}
 		}
 
-		requests[n] = request
+		treeRecord := structs.TreePostRecord{Fields: request}
+
+		postObject.Records = append(postObject.Records, treeRecord)
 	}
 
-	body, err := json.Marshal(requests)
+	body, err := json.Marshal(postObject)
 	if err != nil {
 		return err
 	}
@@ -89,15 +93,20 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 
 	res, err := client.Do(req)
 	if err != nil {
+		fmt.Println(err)
 		err = fmt.Errorf("error sending tree request: %s", err)
 		return err
 	}
 
-	_, err = io.ReadAll(res.Body)
+	fmt.Println(res.Status)
+
+	bodyBytes, err := io.ReadAll(res.Body)
 	if err != nil {
+		fmt.Println(err)
 		err = fmt.Errorf("error sending tree request: %s", err)
 		return err
 	}
+	fmt.Println(string(bodyBytes))
 
 	return nil
 }

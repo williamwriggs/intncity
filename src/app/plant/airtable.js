@@ -82,14 +82,18 @@ export async function createTreePlantingRequest(prs, provider) {
   for (const pr of prs) {
     const formatted = {
       "Request Date": Date.now(),
-      "Requested Tree": pr.tree.name,
+      "Tree Name": pr.tree.name,
       "Tree Category": pr.tree.category,
       "Location Longitude": pr.longitude,
       "Location Latitude": pr.latitude,
       "Questions": pr.questions,
       "Status": "Request Received",
-      "Images": pr.images,
+      "Images": [],
       "Location Address": pr.address
+    }
+
+    for(const image of pr.images) {
+      formatted["Images"].push({url: image, filename: ""})
     }
 
     requests.push(formatted)
