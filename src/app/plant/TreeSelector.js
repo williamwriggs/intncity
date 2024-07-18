@@ -29,7 +29,7 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
 
   const handlePlantSelectionChange = (event, newValue, index) => {
     const updatedTrees = [...currentTrees];
-    updatedTrees[index] = { ...updatedTrees[index], name: newValue.name };
+    updatedTrees[index] = { ...updatedTrees[index], name: newValue.name, category: newValue.category };
     setCurrentTrees(updatedTrees);
     onPlantSelectionChanged(updatedTrees);
   };
