@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useRef, useState, useEffect} from "react";
 import  {
   Input,
   Typography,
@@ -66,8 +66,11 @@ export default function TreeMap(props) {
   const [Libraries] = useState(['places']);
   const [mapInstance, setMapInstance] = useState();
   const [mapMarker, setMapMarker] = React.useState(props.currentLocation);
-  const [addressAutocomplete, setAddressAutocomplete] = useState();
+  const [addressAutocompletes, setAddressAutocompletes] = useState([]);
   const [currentAddress, setCurrentAddress] = React.useState(props.currentAddress);
+  const [currentTrees, setCurrentTrees] = useLocalStorage("currentTrees", [])
+  const [mapMarkers, setMapMarkers] = useState([])
+  let auto = []
 
   // Initialize Google map instance
   const { isLoaded } = useJsApiLoader({
@@ -82,27 +85,41 @@ export default function TreeMap(props) {
     }
   )
 
-  const onAutocompleteLoad = (autocomplete) => {
-    setAddressAutocomplete(autocomplete);
+  const onAutocompleteLoad = (index, autocomplete) => {
+    autocomplete.setFields()
+    auto.push(autocomplete)
+    setAddressAutocompletes(auto)
   }
 
-  const onPlaceChanged = () => {
-    if (addressAutocomplete) {
-      const place = addressAutocomplete.getPlace();
-      if (place.formatted_address) {
-        setCurrentAddress(place.formatted_address);
-      }
-      const loc = place.geometry.location;
-  
-      if (mapInstance) {
-        console.log("New map marker on: " + JSON.stringify(loc));
-        setMapMarker(loc);
-        mapInstance.panTo(loc);
-        mapInstance.setZoom(19);
-      }      
+  const setTreeAddress = (index, address, loc) => {
+    const newTrees = [...currentTrees]
+    newTrees[index].address = address;
+    newTrees[index].loc = loc || undefined
+    newTrees[index].latitude = loc.lat()
+    newTrees[index].longitude = loc.lng()
+    console.log(loc)
+    setCurrentTrees(newTrees)
+  }
 
-      if (props.handleLocationChanged) {
-        props.handleLocationChanged(place.formatted_address, loc);
+  useEffect(() => {
+    const locs = currentTrees.map((tree) => {
+      return tree?.loc || null
+    })
+    console.log(locs)
+    setMapMarkers(locs)
+  }, [currentTrees])
+
+  const onPlaceChanged = (index) => {
+    if (addressAutocompletes[index]) {
+      const place = addressAutocompletes[index].getPlace();
+      console.log(place)
+      const loc = place?.geometry?.location
+      if(mapInstance) {
+        mapInstance.panTo(loc);
+        mapInstance.setZoom(15);
+      }
+      if (place.formatted_address) {
+        setTreeAddress(index, place.formatted_address, loc)
       }
     }
   };
@@ -116,28 +133,47 @@ export default function TreeMap(props) {
       <Typography variant="h6" gutterBottom>Planned location</Typography>
       {isLoaded ? (
         <React.Fragment>
-          <Autocomplete 
-            onLoad={onAutocompleteLoad}
-            onPlaceChanged={onPlaceChanged} 
-          >
-            <Input type='text' placeholder='Planting location address' fullWidth></Input>
-          </Autocomplete>
+          {currentTrees.map((value, index) => {
+            return (
+              <div style={{display: "grid", gridTemplateColumns: "1fr 25fr"}} key={index}>
+                <div style={{margin: "auto"}}>
+                  {(index + 1) + "."} 
+                </div>
+                <Autocomplete 
+                  default={value.address}
+                  sx={{display:"inline", width:"70%"}}
+                  onLoad={(autocomplete) => onAutocompleteLoad(index, autocomplete)}
+                  onPlaceChanged={() => onPlaceChanged(index)} 
+                >
+                  <Input type='text' defaultValue={value.address? value.address : undefined} placeholder={value.name + ' planting location address'} fullWidth></Input>
+                </Autocomplete>
+              </div>
+            )
+          })}
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             options={mapOptions}
-            zoom={13}
-            center={mapMarker}
+            zoom={10}
+            center={mapMarkers[0] || {lat: 37.8043514, lng: -122.2711639}}
             onLoad={onMapLoad}
           >
-            <MarkerF
-              key={'marker1'}
-              onLoad={onMarkerLoad} 
-              // onClick={() => onClickMarker(office.id)}
-              position={mapMarker}
-              draggable={true}
-              clickable={true}
-              title={"Designated planting location, drag the marker to reposition"}
-            />
+            {mapMarkers.map((marker, index, markers) => {
+              return (
+                <>
+                  <MarkerF
+                  label={"" + (index + 1)}
+                  key={'marker' + index}
+                  onLoad={onMarkerLoad} 
+                  // onClick={() => onClickMarker(office.id)}
+                  position={marker}
+                  draggable={false}
+                  clickable={false}
+                  title={"Designated planting location, drag the marker to reposition"}
+                  />
+                </>
+              )
+            })}
+
           </GoogleMap>
         </React.Fragment>
       ) : null}      

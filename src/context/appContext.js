@@ -5,8 +5,18 @@ import { createContext, useContext, useMemo, useState } from "react"
 const AppContext = createContext(null)
 
 export const AppContextProvider = ({ children }) => {
+    const tree = {
+        name: null,
+        category: null,
+        longitude: null,
+        latitude: null,
+        questions: null,
+        images: null,
+        address: null,
+      };
+
     const [treeList, setTreeList] = useState([])
-    const [currentTrees, setCurrentTrees] = useLocalStorage("currentTrees", [])
+    const [currentTrees, setCurrentTrees] = useLocalStorage("currentTrees", [tree])
 
     const value = useMemo(() => {
         return {

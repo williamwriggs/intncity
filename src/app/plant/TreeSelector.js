@@ -13,11 +13,12 @@ import {
 
 import { useTreeListNew } from "./airtable";
 import TreeIcon from "@/assets/tree.svg";
+import { useAppContext } from "@/context/appContext";
 
 export default function PlantSelector({ onPlantSelectionChanged }) {
   const { plants, fetchTreeList } = useTreeListNew();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [currentTrees, setCurrentTrees] = useState([]);
+  const {currentTrees, setCurrentTrees} = useAppContext();
   
   useEffect(() => {
     async function onInitialize() {
@@ -28,6 +29,7 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
   }, []);
 
   const handlePlantSelectionChange = (event, newValue, index) => {
+    console.log(index)
     const updatedTrees = [...currentTrees];
     updatedTrees[index] = { ...updatedTrees[index], name: newValue.name, category: newValue.category };
     setCurrentTrees(updatedTrees);
@@ -58,7 +60,10 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
         size="large"
         variant="contained"
         sx={{
-          borderRadius: "0 0 0 5px",
+          borderRadius: "5px",
+          display: "inline",
+          marginLeft: "auto",
+          width: "10px"
         }}
         onClick={handleAddTree}
       >
@@ -67,13 +72,53 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
     );
   };
 
+  const RemoveTreeButton = ({index}) => {
+
+    const handleRemoveTree = () => {
+      const updatedTrees = [...currentTrees]
+      updatedTrees.splice(index, 1)
+      setCurrentTrees(updatedTrees);
+      onPlantSelectionChanged(updatedTrees);
+    };
+
+    console.log("CURRENT TREES", currentTrees);
+
+    return (
+      <Button
+        color="primary"
+        type="button"
+        size="large"
+        variant="contained"
+        sx={{
+          border: "none",
+          marginLeft: "auto",
+          marginTop: "auto",
+          marginBottom: "auto",
+          width: "30px",
+          height: "40px",
+          background: "none",
+          color: "red",
+          fontSize: "30px",
+          "&:hover": {
+            backgroundColor: "whitesmoke"
+          }
+        }}
+        disableElevation={true}
+        onClick={handleRemoveTree}
+      >
+        -
+      </Button>
+    );
+  };
+
   const TreeDropdowns = () => {
     return (
       <React.Fragment>
         {currentTrees.map((tree, index) => (
-          <Grid xs={12} item key={index}>
+          <div style={{display: "grid", gridTemplateColumns: "5fr 1fr", width: "100%", margin: "20px"}} key={index}>
             <Autocomplete
-              options={plants || [{ name: "tree" }]}
+              value={tree.name ? tree : undefined}
+              options={plants || [{ name: "No plants found" }]}
               autoHighlight
               getOptionLabel={(option) => option.name}
               renderOption={(props, option) => (
@@ -84,6 +129,7 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
               renderInput={(params) => (
                 <TextField
                   variant="outlined"
+                  label="Choose Plant"
                   {...params}
                   inputProps={{
                     ...params.inputProps,
@@ -92,7 +138,8 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
               )}
               onChange={(event, newValue) => handlePlantSelectionChange(event, newValue, index)}
             />
-          </Grid>
+            <RemoveTreeButton index={index} />
+          </div>
         ))}
       </React.Fragment>
     );
@@ -102,8 +149,10 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
     <Paper sx={{ padding: 4 }}>
       <Grid container spacing={2}>
         <Grid xs={12} item>
-          <Typography variant="h6">Tree species</Typography>
-          <AddTreeButton />
+          <div style={{display: "grid", gridTemplateColumns: "4fr 1fr", marginBottom: "10px"}}>
+            <Typography variant="h6" sx={{display: "inline"}}>Tree species</Typography>
+            <AddTreeButton />
+          </div>
         </Grid>
         {isLoaded ? (
           <TreeDropdowns />

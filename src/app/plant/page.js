@@ -17,6 +17,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useLocalStorage } from "@/utilities/useLocalStorage";
 import { createTreePlantingRequest, PlantingRequest } from './airtable'; // MIGRATE TO API ROUTE
+import { useAppContext } from '@/context/appContext';
 
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -49,6 +50,7 @@ const EAST_OAKLAND = {lat: 37.755443,lng: -122.184389};
 
 export default function PlantingRequestForm() {
   const auth = useAuth()
+  const { currentTrees, setCurrentTrees} = useAppContext()
   const navigate = useRouter().push;   
   const [activeStep, setActiveStep] = useLocalStorage("appStep", 0);  
   const [email] = useLocalStorage("email", "");  
@@ -64,7 +66,13 @@ export default function PlantingRequestForm() {
 
   useEffect(() => {
     setValidated(validateForm);
- }, [complyAppropriateSpecies, complyMinContainerSize, complyWithStandard, tree]);
+  }, [complyAppropriateSpecies, complyMinContainerSize, complyWithStandard, tree]);
+
+  useEffect(() => {
+    setComplyAppropriateSpecies(!(activeStep === 0))
+    setComplyMinContainerSize(!(activeStep === 0))
+    setComplyWithStandard(!(activeStep === 0))
+  }, [])
 
   function getStepContent(step) {
     // console.log("Load wizard forms");
@@ -77,7 +85,7 @@ export default function PlantingRequestForm() {
                   complyWithStandard={complyWithStandard}
                   handleAttributesChanged={onHandleAttributesChanged}/>;
       case 1:
-        return <LocationForm 
+        return <LocationForm
                   currentLocation={currentLocation}
                   currentAddress={currentAddress}
                   handleLocationChanged={onHandleLocationChanged}/>;
@@ -118,6 +126,9 @@ export default function PlantingRequestForm() {
 
     if (key === "tree") {
       setTree(value[0]);    
+      setCurrentTrees(value)
+      console.log("current trees:")
+      console.log(value)
       console.log("tree value", value[0])
       // console.log("tree = ", value.name);      
     }
@@ -125,6 +136,15 @@ export default function PlantingRequestForm() {
 
   const handleNext = async () => {
     setActiveStep(activeStep + 1);
+
+    if(activeStep === 0) {
+      console.log("active step 0")
+      let newTrees = [...currentTrees]
+      newTrees = newTrees.filter((value) => {
+        return !!value.name
+      })
+      setCurrentTrees(newTrees)
+    }
 
     // final step of the application process, time to submit
     if (activeStep === steps.length - 1) {

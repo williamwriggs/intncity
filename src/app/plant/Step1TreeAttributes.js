@@ -34,9 +34,9 @@ export default function TreeAttributesForm(props) {
     }    
   };
 
-  function onPlantSelectionChanged(plant) {
+  function onPlantSelectionChanged(plants) {
     if (props.handleAttributesChanged) {
-      props.handleAttributesChanged("tree", plant);
+      props.handleAttributesChanged("tree", plants);
     }    
   }
 
