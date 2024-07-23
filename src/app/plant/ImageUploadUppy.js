@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useReducer, useState } from "react";
 import { useLocalStorage } from "@/utilities/useLocalStorage";
 import Uppy from '@uppy/core';
 import Tus from '@uppy/tus';
@@ -11,14 +11,28 @@ import '@uppy/image-editor/dist/style.css';
 import '@uppy/core/dist/style.css';
 import '@uppy/webcam/dist/style.css'
 
-export default function UppyUploadWidget() {
+export default function UppyUploadWidget({ treeIndex }) {
   const [images, setImages] = useLocalStorage("images", []);
   const [uppy, setUppy] = useState();
   const [attachments, setAttachments] = useState({})
+  const [currentTrees, setCurrentTrees] = useLocalStorage("currentTrees", [])
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+
+
+  useEffect(() => {
+    forceUpdate()
+    setAttachments({})
+  }, [treeIndex])
 
   useEffect(() => {
     console.log(images)
   }, [images])
+
+  const setTreeImages = (index, images) => {
+    const newTrees = [...currentTrees]
+    newTrees[index].images = images
+    setCurrentTrees(newTrees)
+  }
 
   React.useEffect(() => {
     const uppy = new Uppy({
@@ -60,8 +74,23 @@ export default function UppyUploadWidget() {
     .use(Tus, {endpoint: 'https://tusd.tusdemo.net/files/',
         method: 'post',
     });
+
+    if(currentTrees[treeIndex].images?.length) {
+      currentTrees[treeIndex].images.forEach((image, index) => {
+        fetch(image)
+        .then((response) => response.blob())
+        .then((blob) => {
+          uppy.addFile({
+            name: "image_"+ index + ".jpg",
+            type: blob.type,
+            data: blob
+          });
+        });
+      })
+    }
+
     setUppy(uppy);
-  }, [])
+  }, [treeIndex])
 
   // React.useEffect(() => {
   //   return () => uppy.close({ reason: 'unmount' })
@@ -74,7 +103,7 @@ export default function UppyUploadWidget() {
     attachments[response.uploadURL] = true
     console.log(attachments)
     setAttachments(attachments)
-    setImages(Object.keys(attachments))
+    setTreeImages(treeIndex, Object.keys(attachments))
   });
 
   return (
@@ -86,7 +115,7 @@ export default function UppyUploadWidget() {
         doneButtonHandler={() => {
           uppy.cancelAll()
           setAttachments({})
-          setImages([])
+          setTreeImages(treeIndex, null)
         }}
         proudlyDisplayPoweredByUppy={false}
       />
