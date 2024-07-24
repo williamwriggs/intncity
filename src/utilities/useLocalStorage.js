@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react";
 
-function getStorageValue(key, defaultValue) {
+export function getStorageValue(key, defaultValue) {
   // getting stored value
   if(typeof localStorage !== "undefined" && window.localStorage) {
     const saved = localStorage.getItem(key);

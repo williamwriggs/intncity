@@ -12,7 +12,9 @@ import {
   ListItemIcon
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { useLocalStorage } from "@/utilities/useLocalStorage";
+import { useAppContext } from "@/context/appContext";
+
+import { useLocalStorage, getStorageValue } from "@/utilities/useLocalStorage";
 
 // import StreetView from './StreetView';
 import UppyUploadWidget from './ImageUploadUppy';
@@ -22,14 +24,12 @@ export default function Review() {
   const [tree] = useLocalStorage("tree");
   const [address] = useLocalStorage("address", "");
   const [notes, setNotes] = useLocalStorage("notes", "");
-  const [currentTrees, setCurrentTrees] = useLocalStorage("currentTrees", [])
+  const { currentTrees, setCurrentTrees} = useAppContext()
   const [selectedTree, setSelectedTree] = useState(0)
-  const [selectedTreeLength, setSelectedTreeLength] = useState(0)
 
   useEffect(() => {
-    setSelectedTreeLength(currentTrees[selectedTree.images?.length || 0])
+    setCurrentTrees(getStorageValue("currentTrees", []))
   }, [selectedTree])
-
   
   const handleChangeNotes = (event) => {
     setNotes(event.target.value);
@@ -55,12 +55,15 @@ export default function Review() {
         <List disablePadding key={selectedTree}>
           {currentTrees.map((tree, index) => {
             const plantingDetails = "Location: " + tree.address;
+            console.log("length check " + index, tree?.images?.length > 0)
+            console.log(tree)
+            console.log("selected check " + index, selectedTree !== index)
             // TODO: fix tree selector style & image uploading
             return (
               <ListItem key={tree.name + "_" + index} onClick={() => handleSelectTree(index)} sx={treeSelectorStyle}>
                 <ListItemIcon>
                   { (selectedTree === index) && <CheckCircleIcon color="primary"/> }
-                  { selectedTreeLength !== 0 && selectedTree !== index && <CheckCircleIcon color="success"/> }
+                  { (tree?.images?.length > 0 && selectedTree !== index) && <CheckCircleIcon color="success"/> }
                 </ListItemIcon>
                 <ListItemText primary={tree.name} secondary={plantingDetails} primaryTypographyProps={{ fontSize: '18px', fontWeight: 'bold' }} />
               </ListItem>

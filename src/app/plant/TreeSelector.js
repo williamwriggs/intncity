@@ -11,6 +11,8 @@ import {
   Typography,
 } from "@mui/material";
 
+import DeleteIcon from "@mui/icons-material/Delete"
+
 import { useTreeListNew } from "./airtable";
 import TreeIcon from "@/assets/tree.svg";
 import { useAppContext } from "@/context/appContext";
@@ -106,7 +108,7 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
         disableElevation={true}
         onClick={handleRemoveTree}
       >
-        -
+        <DeleteIcon></DeleteIcon>
       </Button>
     );
   };

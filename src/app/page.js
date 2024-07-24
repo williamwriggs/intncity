@@ -16,6 +16,8 @@ import appTheme from "@/theme.js";
 import { ThemeProvider } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/auth/Hooks";
+import { useAppContext } from "@/context/appContext";
+
 
 function Copyright() {
   return (
@@ -31,18 +33,34 @@ function Copyright() {
 }
 
 const AuthButton = () => {
+  const { currentTrees, setCurrentTrees} = useAppContext()
+  const [activeStep, setActiveStep] = useLocalStorage("appStep", 0);
   const auth = useAuth();
   const navigate = useRouter().push;
   const [user, setUser] = useState(null);
-  const [connected, setConnected] = useState(false);
+  const [connected, setConnected] = useState(null);
 
   useEffect(() => {
+    if(connected != null && !connected) {
+      const t = {
+        name: null,
+        category: null,
+        longitude: null,
+        latitude: null,
+        questions: null,
+        images: null,
+        address: null,
+      };
+      setActiveStep(0)
+      setCurrentTrees([t])
+    }
     console.log(connected);
   }, [connected]);
 
   useEffect(() => {
     if (auth) {
       console.log(auth);
+      setConnected(auth.connected);
     }
     if (auth.user) {
       console.log(auth.user);
@@ -94,7 +112,7 @@ const AuthButton = () => {
   );
 };
 
-export default function StartTreePlantingRequest() {
+export default function StartTreePlantingRequest() {  
   let navigate = useRouter().push;
   const auth = useAuth();
 

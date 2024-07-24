@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
-import { useLocalStorage } from "@/utilities/useLocalStorage";
+import { useLocalStorage, getStorageValue } from "@/utilities/useLocalStorage";
 import { createTreePlantingRequest, PlantingRequest } from './airtable'; // MIGRATE TO API ROUTE
 import { useAppContext } from '@/context/appContext';
 
@@ -65,8 +65,25 @@ export default function PlantingRequestForm() {
   const [validated, setValidated] = React.useState(validateForm());
 
   useEffect(() => {
-    setValidated(validateForm);
+    setValidated(validateForm());
   }, [complyAppropriateSpecies, complyMinContainerSize, complyWithStandard, tree]);
+
+  useEffect(() => {
+    if(activeStep === 0) {
+      setValidated(validateForm())
+    }
+    if(activeStep === 1) {
+      let v = true
+      for(const tree of currentTrees) {
+        if(tree.address === null) {
+          v = false
+          break
+        }
+      }
+      console.log(v)
+      setValidated(v)
+    }
+  }, [activeStep, currentTrees])
 
   useEffect(() => {
     setComplyAppropriateSpecies(!(activeStep === 0))
@@ -97,10 +114,17 @@ export default function PlantingRequestForm() {
   }
 
   function validateForm() {
+    let v = true
+      for(const tree of currentTrees) {
+        if(tree.name === null) {
+          v = false
+          break
+        }
+      }
     return (complyAppropriateSpecies 
       && complyMinContainerSize 
       && complyWithStandard
-      && tree != "");
+      && v);
   }
 
   function onHandleLocationChanged(address, loc) {
@@ -179,10 +203,23 @@ export default function PlantingRequestForm() {
         questions: questions,
         images: images
       };
-      console.log("Tree request: " + JSON.stringify(pr));
+
+      const prs = getStorageValue("currentTrees", [])
+
+      console.log("requests: ", prs)
 
       // Create request in Airtable
-      let requestId = await createTreePlantingRequest([pr], auth.provider);
+      let requestId = await createTreePlantingRequest(prs, auth.provider);
+      const t = {
+        name: null,
+        category: null,
+        longitude: null,
+        latitude: null,
+        questions: null,
+        images: null,
+        address: null,
+      };
+      setCurrentTrees([t])
 
       // Send confirmation email
       const shortId = requestId.slice(0, 4);
@@ -211,6 +248,15 @@ export default function PlantingRequestForm() {
 
   const handleNewTreeRequest = (event) => {
     event.preventDefault();
+    const tree = {
+      name: null,
+      category: null,
+      longitude: null,
+      latitude: null,
+      questions: null,
+      images: null,
+      address: null,
+    };
 
     // Force application state reset
     setImages("");
@@ -220,6 +266,7 @@ export default function PlantingRequestForm() {
     setComplyWithStandard(false);
     setCurrentAddress("");
     setCurrentLocation(EAST_OAKLAND);
+    setCurrentTrees([tree])
 
     navigate('/plant');
   }

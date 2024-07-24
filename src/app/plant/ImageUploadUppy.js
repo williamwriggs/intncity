@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useReducer, useState } from "react";
 import { useLocalStorage } from "@/utilities/useLocalStorage";
+import { useAppContext } from "@/context/appContext";
 import Uppy from '@uppy/core';
 import Tus from '@uppy/tus';
 import { Dashboard } from '@uppy/react';
@@ -15,7 +16,7 @@ export default function UppyUploadWidget({ treeIndex }) {
   const [images, setImages] = useLocalStorage("images", []);
   const [uppy, setUppy] = useState();
   const [attachments, setAttachments] = useState({})
-  const [currentTrees, setCurrentTrees] = useLocalStorage("currentTrees", [])
+  const { currentTrees, setCurrentTrees} = useAppContext()
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
 
@@ -34,9 +35,15 @@ export default function UppyUploadWidget({ treeIndex }) {
     setCurrentTrees(newTrees)
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const controller = new AbortController()
+    const signal = controller.signal
+
     const uppy = new Uppy({
-      meta: { type: 'avatar' },
+      meta: { 
+        type: 'avatar',
+        treeIndex
+      },
       restrictions: {
         maxFileSize: 5000000,
         maxNumberOfFiles: 3,
@@ -76,20 +83,30 @@ export default function UppyUploadWidget({ treeIndex }) {
     });
 
     if(currentTrees[treeIndex].images?.length) {
+      const currentTreeIndex = treeIndex
       currentTrees[treeIndex].images.forEach((image, index) => {
-        fetch(image)
+        fetch(image, { signal })
         .then((response) => response.blob())
         .then((blob) => {
-          uppy.addFile({
-            name: "image_"+ index + ".jpg",
-            type: blob.type,
-            data: blob
-          });
+          if(treeIndex === currentTreeIndex) {
+            uppy.addFile({
+              name: "image_"+ index + ".jpg",
+              type: blob.type,
+              data: blob,
+              meta: {
+                treeIndex: currentTreeIndex
+              }
+            });
+          }
         });
       })
     }
 
     setUppy(uppy);
+
+    return () => {
+      controller.abort()
+    }
   }, [treeIndex])
 
   // React.useEffect(() => {
@@ -101,9 +118,8 @@ export default function UppyUploadWidget({ treeIndex }) {
   }
   uppy.on('upload-success', (file, response) => {
     attachments[response.uploadURL] = true
-    console.log(attachments)
     setAttachments(attachments)
-    setTreeImages(treeIndex, Object.keys(attachments))
+    setTreeImages(file.meta.treeIndex, Object.keys(attachments))
   });
 
   return (

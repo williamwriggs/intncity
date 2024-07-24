@@ -12,6 +12,7 @@ import {
   InfoWindow
 } from '@react-google-maps/api';
 import { useLocalStorage } from "@/utilities/useLocalStorage";
+import { useAppContext } from "@/context/appContext";
 
 const mapContainerStyle = {
   height: "450px",
@@ -68,7 +69,7 @@ export default function TreeMap(props) {
   const [mapMarker, setMapMarker] = React.useState(props.currentLocation);
   const [addressAutocompletes, setAddressAutocompletes] = useState([]);
   const [currentAddress, setCurrentAddress] = React.useState(props.currentAddress);
-  const [currentTrees, setCurrentTrees] = useLocalStorage("currentTrees", [])
+  const { currentTrees, setCurrentTrees} = useAppContext()
   const [mapMarkers, setMapMarkers] = useState([])
   let auto = []
 
@@ -134,21 +135,23 @@ export default function TreeMap(props) {
       {isLoaded ? (
         <React.Fragment>
           {currentTrees.map((value, index) => {
-            return (
-              <div style={{display: "grid", gridTemplateColumns: "1fr 25fr"}} key={index}>
-                <div style={{margin: "auto"}}>
-                  {(index + 1) + "."} 
+          if(value.name) {
+              return (
+                <div style={{display: "grid", gridTemplateColumns: "1fr 25fr"}} key={index}>
+                  <div style={{margin: "auto"}}>
+                    {(index + 1) + "."} 
+                  </div>
+                  <Autocomplete 
+                    default={value.address}
+                    sx={{display:"inline", width:"70%"}}
+                    onLoad={(autocomplete) => onAutocompleteLoad(index, autocomplete)}
+                    onPlaceChanged={() => onPlaceChanged(index)} 
+                  >
+                    <Input type='text' defaultValue={value.address? value.address : undefined} placeholder={value.name + ' planting location address'} fullWidth></Input>
+                  </Autocomplete>
                 </div>
-                <Autocomplete 
-                  default={value.address}
-                  sx={{display:"inline", width:"70%"}}
-                  onLoad={(autocomplete) => onAutocompleteLoad(index, autocomplete)}
-                  onPlaceChanged={() => onPlaceChanged(index)} 
-                >
-                  <Input type='text' defaultValue={value.address? value.address : undefined} placeholder={value.name + ' planting location address'} fullWidth></Input>
-                </Autocomplete>
-              </div>
-            )
+              )
+            }
           })}
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
