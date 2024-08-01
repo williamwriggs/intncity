@@ -105,6 +105,12 @@ export default function PlantingRequestForm() {
     setComplyWithStandard(!(activeStep === 0))
   }, [])
 
+  useEffect(() => {
+    if(auth?.user?.connected === false || !auth?.provider) {
+      router.replace("/")
+    }
+  }, [auth])
+
   function getStepContent(step) {
     // console.log("Load wizard forms");
     switch (step) {

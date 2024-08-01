@@ -51,8 +51,8 @@ export default function Profile() {
             console.log("recovered address: " + recoveredAddress)
         }
 
-        if(auth?.user?.connected === false) {
-            redirect("/login")
+        if(auth?.user?.connected === false || !auth?.provider) {
+            redirect("/")
         } else if(auth?.user?.connected === true) {
             getUserInfo()
             signTest()
