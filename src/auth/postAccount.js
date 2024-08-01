@@ -5,7 +5,7 @@ export default async function postAccount(name, email, provider) {
 
     console.log("user: ", name, email)
     
-    const res = await signedFetch("http://localhost:3000/api/account", {
+    const res = await signedFetch("/api/account", {
         method: "POST",
         body: JSON.stringify({
             name,

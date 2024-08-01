@@ -51,7 +51,8 @@ const EAST_OAKLAND = {lat: 37.755443,lng: -122.184389};
 export default function PlantingRequestForm() {
   const auth = useAuth()
   const { currentTrees, setCurrentTrees} = useAppContext()
-  const navigate = useRouter().push;   
+  const router = useRouter()
+  const navigate = router.push;   
   const [activeStep, setActiveStep] = useLocalStorage("appStep", 0);  
   const [email] = useLocalStorage("email", "");  
   const [images, setImages] = useLocalStorage("images", []);
@@ -86,6 +87,19 @@ export default function PlantingRequestForm() {
   }, [activeStep, currentTrees])
 
   useEffect(() => {
+    if(!currentTrees || currentTrees?.length === 0) {
+      const t = {
+        name: null,
+        category: null,
+        longitude: null,
+        latitude: null,
+        questions: null,
+        images: null,
+        address: null,
+      };
+      setCurrentTrees([t])
+    }
+
     setComplyAppropriateSpecies(!(activeStep === 0))
     setComplyMinContainerSize(!(activeStep === 0))
     setComplyWithStandard(!(activeStep === 0))
@@ -115,12 +129,14 @@ export default function PlantingRequestForm() {
 
   function validateForm() {
     let v = true
-      for(const tree of currentTrees) {
-        if(tree.name === null) {
-          v = false
-          break
-        }
+    for(const tree of currentTrees) {
+      if(tree.name === null) {
+        v = false
+        break
       }
+    }
+    if(currentTrees.length === 0) v = false
+
     return (complyAppropriateSpecies 
       && complyMinContainerSize 
       && complyWithStandard
@@ -243,7 +259,11 @@ export default function PlantingRequestForm() {
   };
 
   const handleBack = () => {
-    setActiveStep(activeStep - 1);
+    if(activeStep === 0) {
+      router.back()
+    } else {
+      setActiveStep(activeStep - 1);
+    }
   };
 
   const handleNewTreeRequest = (event) => {
@@ -288,14 +308,22 @@ export default function PlantingRequestForm() {
                 Your application number is #{appId.slice(0, 4)}. We have emailed your application
                 confirmation, and will send you an update when your permit has been approved.
               </Typography>
-              <Box m={1} display="flex" justifyContent="center" alignItems="center">
+              <Box m={1} display="flex" flexDirection="column" justifyContent="center" alignItems="center">
                 <Button 
                     onClick={handleNewTreeRequest}
                     variant="contained" 
                     color="secondary"
-                    sx={{width: 200, mt: 4}}>
-                      Plant another Tree
-                  </Button>    
+                    sx={{width: 200, mt: 4, margin: "10px"}}>
+                      Plant more trees
+                  </Button>
+                  <Button
+                    onClick={() => navigate("/")}
+                    variant="contained"
+                    color="primary"
+                    sx={{width: 200, borderRadius: "5px", margin: "10px"}}
+                  >
+                    Home  
+                  </Button>   
               </Box>
               <ImageCarousel sx={{width: "800px"}}/>
             </React.Fragment>
@@ -303,11 +331,9 @@ export default function PlantingRequestForm() {
             <React.Fragment>
               {getStepContent(activeStep)}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                {activeStep !== 0 && (
-                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                    Back
-                  </Button>
-                )}
+                <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                  Back
+                </Button>
                 <Fab
                   size="medium" 
                   color="primary" 

@@ -5,6 +5,7 @@ import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
 import { LOGIN_PROVIDER, OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import postAccount from "./postAccount";
+import signedFetch from "./signedFetch";
 
 const AuthContext = createContext(null);
 
@@ -47,6 +48,7 @@ web3auth.configureAdapter(adapter)
 export const AuthProvider = ({ children }) => {
   const [provider, setProvider] = useState(null)
   const [user, setUser] = useState(null)
+  const [app, setApp] = useState(null)
   const [connected, setConnected] = useState(false)
 
   useEffect(() => {
@@ -66,7 +68,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const post = async () => {
       const info = await user?.getUserInfo()
-      console.log("info: ", info)
       if(info?.name && info?.email) {
         await postAccount(info.name, info.email, provider)
       }
@@ -76,6 +77,18 @@ export const AuthProvider = ({ children }) => {
       post()
     }
   }, [connected])
+
+  useEffect(() => {
+
+    if(provider) {
+      const getAppInfo = async () => {
+        const info = await signedFetch("/api/account", {provider})
+        const i = await info.json()
+        setApp(i)
+      }
+      getAppInfo()
+    }
+  }, [provider])
 
   // call this function when you want to authenticate the user
   const Login = async (method, params) => {
@@ -146,12 +159,13 @@ export const AuthProvider = ({ children }) => {
   const value = useMemo(
     () => ({
       user,
+      app,
       provider,
       connected,
       Login,
       Logout
     }),
-    [provider]
+    [provider, app]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

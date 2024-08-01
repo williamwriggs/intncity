@@ -47,7 +47,7 @@ export default function UppyUploadWidget({ treeIndex }) {
       restrictions: {
         maxFileSize: 5000000,
         maxNumberOfFiles: 3,
-        allowedFileTypes: ['image/*'],
+        allowedFileTypes: ['image/*', '.heic',  '.heif'],      
         requiredMetaFields: [],
       },
       autoProceed: true,
@@ -90,7 +90,7 @@ export default function UppyUploadWidget({ treeIndex }) {
         .then((blob) => {
           if(treeIndex === currentTreeIndex) {
             uppy.addFile({
-              name: "image_"+ index + ".jpg",
+              name: "image_"+ index,
               type: blob.type,
               data: blob,
               meta: {

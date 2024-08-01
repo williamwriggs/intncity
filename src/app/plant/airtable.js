@@ -56,7 +56,7 @@ export function useTreeList() {
 
 export function useTreeListNew() {
   const {treeList, setTreeList} = useAppContext();
-  const url = "http://localhost:3000/api/trees";
+  const url = "/api/trees";
 
   const fetchTreeList = async () => {
     console.log(treeList.length)

@@ -11,42 +11,26 @@ import {
     Grid,
     Button,
     Box,
-    Typography
+    Typography,
+    List,
+    ListItem,
+    TableRow,
+    TableCell,
+    TableContainer,
+    Paper,
+    TableBody,
+    CircularProgress
 } from '@mui/material';
 import { useRouter } from "next/navigation";
 import signedFetch from "@/auth/signedFetch";
+import { Table } from "airtable";
 
 export default function Profile() {
     const auth = useAuth();
     const [userInfo, setUserInfo] = useState()
+    const [appInfo, setAppInfo] = useState()
     const redirect = useRouter().replace
     const navigate = useRouter().push
-
-    const url = 'http://localhost:3000/api/trees'
-    // const url = 'http://localhost:3000/api/auth'
-
-    const authTest = async () => {
-        console.log(url)
-        const res = await signedFetch(url, {
-            provider: auth,
-            method: "GET",
-            // body: JSON.stringify({
-            //     email: userInfo?.email,
-            //     name: userInfo?.name
-            // })
-        })
-
-        // const res = await signedFetch(url, {
-        //     provider: auth,
-        //     method: "POST",
-        //     body: JSON.stringify({
-        //         email: userInfo?.email,
-        //         name: userInfo?.name
-        //     })
-        // })
-
-        console.log(await res.json())
-    }
 
 
     useEffect(() => {
@@ -74,11 +58,29 @@ export default function Profile() {
             signTest()
         }
 
+        if(auth.app) {
+            setAppInfo(auth.app)
+            console.log(auth.app)
+        }
+
     }, [auth])
+
+    const tableRowStyle = {
+        width: "100%",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+    }
+
+    const tableCellStyle = {
+        display: "inline-flex",
+        width: "50%",
+        padding: "20px",
+
+    }
 
     return (
         <ThemeProvider theme={appTheme}>
-            <Grid container sx={{ height: '100vh' }}>
+            <Grid container sx={{ height: '100vh', position: "fixed" }}>
     
             {/*  Left Column - Background Image */}
     
@@ -93,40 +95,66 @@ export default function Profile() {
                         t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
+                    
                 }}
             />
     
             {/*  Right Column - Text Field */}
     
             <CssBaseline />
-            <Grid item sm={12} md={8}>
-                <Grid item align="left" color="transparent">
-                <Button 
-                    color="secondary" 
-                    size="large" 
-                    type="button" 
-                    variant="contained"
-                    onClick={() => {
-                        navigate("/")
-                    }}
-                    sx={{
-                        borderRadius: "0 0 5px 0"
-                    }}
-                >
-                    Back
-                </Button>
+            <Grid item sm={12} md={8} sx={{padding: "none", margin: "none", width: "100%", backgroundColor: "lightGray"}}>
+                <Grid item align="left" color="transparent" sx={{position: "fixed"}}>
+                    <Button 
+                        color="secondary" 
+                        size="large" 
+                        type="button" 
+                        variant="contained"
+                        onClick={() => {
+                            navigate("/")
+                        }}
+                        sx={{
+                            borderRadius: "0 0 5px 0"
+                        }}
+                    >
+                        Back
+                    </Button>
                 </Grid>
                 <Box
                     sx={{
-                    my: 8,
-                    mx: 6,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center'
+                        my: 8,
+                        mx: 6,
+                        display: 'flex',
+                        position: "relative",
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        backgroundColor: "white",
+                        margin: "0",
+                        padding: "0",
+                        top: "15vh",
+                        height: "100vh",
+                        borderRadius: "50px 0 0 0",
+                        boxShadow: "5px 2px 10px gray"
                     }}
-                >
-                    <Typography component="h1" variant="h4" color="primary" pb={4}>Hi {userInfo?.name}!</Typography>
-                    <Typography component="h6" variant="h6" color="primary" pb={4}>{userInfo?.email}</Typography>
+                >   
+                    <div style={{borderRadius: "50%", padding: "7px", paddingBottom: "3px", position: "relative", bottom: "7.5vh", backgroundColor: "white", boxShadow: "5px 5px 10px gray"}}>
+                        {userInfo ? <img src={userInfo?.profileImage} style={{ position: "relative", borderRadius: "50%"}}/> : <div style={{height: "96px", width: "96px"}}/>}
+                    </div>
+                    <div style={{width: "70%", marginBottom: "40px", display: "grid", border: "1px solid lightGray", borderRadius: " 10px"}}>
+                            <div sx={{display: "block", width: "100%"}}>
+                                <div style={{...tableRowStyle, borderBottom: "1px solid lightGray"}}>
+                                    <div style={tableCellStyle}>Name: </div>
+                                    <div style={tableCellStyle} align="right">{userInfo?.name}</div>
+                                </div>
+                                <div style={{...tableRowStyle, borderBottom: "1px solid lightGray"}}>
+                                    <div style={tableCellStyle}>Email: </div>
+                                    <div align="right" style={tableCellStyle}>{userInfo?.email}</div>
+                                </div>
+                                <div style={tableRowStyle}>
+                                    <div style={tableCellStyle}>Auth Level: </div>
+                                    <div align="right" style={{...tableCellStyle, textTransform: "capitalize"}}>{appInfo?.fields.auth_level || <CircularProgress size="1rem" />}</div>
+                                </div>
+                            </div>
+                    </div>
                     {/* <Button 
                         variant="contained" 
                         size="large" 
