@@ -1,5 +1,4 @@
 - Fix image metadata for heic files
-- Redirect to home screen from planting flow if not logged in
 - Loading screen for planting request confirmation
 - Drop pin functionality on map
 - Don't allow submit until all images finished uploading
