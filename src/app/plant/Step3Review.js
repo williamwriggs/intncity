@@ -20,9 +20,6 @@ import { useLocalStorage, getStorageValue } from "@/utilities/useLocalStorage";
 import UppyUploadWidget from './ImageUploadUppy';
 
 export default function Review() {
-  const [email] = useLocalStorage("email", "");
-  const [tree] = useLocalStorage("tree");
-  const [address] = useLocalStorage("address", "");
   const [notes, setNotes] = useLocalStorage("notes", "");
   const { currentTrees, setCurrentTrees} = useAppContext()
   const [selectedTree, setSelectedTree] = useState(0)

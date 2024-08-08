@@ -40,7 +40,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = utils.PostTreeRequests(address, requests)
+		id, err := utils.PostTreeRequests(address, requests)
 		if err != nil {
 			fmt.Println("error posting tree request:", err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -48,6 +48,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusCreated)
+		w.Write([]byte(fmt.Sprintf("{\"id\": \"%s\"}", id)))
 
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)

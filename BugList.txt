@@ -1,4 +1,7 @@
-- Fix image metadata for heic files
+- Fix image metadata for heic files 
+    -- Fixed, make sure to upload using ios <13 or >16.4 if on iphone to keep metadata
 - Loading screen for planting request confirmation
+    -- Mostly done, spinner invisible for some reason?
 - Drop pin functionality on map
 - Don't allow submit until all images finished uploading
+- Fix profile screen for small sizes

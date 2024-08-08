@@ -12,6 +12,7 @@ import {
   Stepper,  
   StepLabel,
   Typography,
+  CircularProgress,
 } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
@@ -56,7 +57,7 @@ export default function PlantingRequestForm() {
   const [activeStep, setActiveStep] = useLocalStorage("appStep", 0);  
   const [email] = useLocalStorage("email", "");  
   const [images, setImages] = useLocalStorage("images", []);
-  const [appId, setAppId] = useLocalStorage("appUuid", "");
+  const [appId, setAppId] = useState();
   const [tree, setTree] = useLocalStorage("tree", false);
   const [currentLocation, setCurrentLocation] = useLocalStorage("location", EAST_OAKLAND);
   const [currentAddress, setCurrentAddress] = useLocalStorage("address", "");  
@@ -64,6 +65,10 @@ export default function PlantingRequestForm() {
   const [complyMinContainerSize, setComplyMinContainerSize] = useLocalStorage("complyMinContainerSize", false);
   const [complyWithStandard, setComplyWithStandard] = useLocalStorage("complyWithStandard", false);
   const [validated, setValidated] = React.useState(validateForm());
+
+  useEffect(() => {
+    console.log(appId)
+  }, [appId])
 
   useEffect(() => {
     setValidated(validateForm());
@@ -232,6 +237,7 @@ export default function PlantingRequestForm() {
 
       // Create request in Airtable
       let requestId = await createTreePlantingRequest(prs, auth.provider);
+      console.log("id: " + requestId)
       const t = {
         name: null,
         category: null,
@@ -242,6 +248,8 @@ export default function PlantingRequestForm() {
         address: null,
       };
       setCurrentTrees([t])
+      setAppId(requestId);
+
 
       // Send confirmation email
       const shortId = requestId.slice(0, 4);
@@ -259,9 +267,7 @@ export default function PlantingRequestForm() {
       });
       const result = await response.json();
       console.log("Email result: " + JSON.stringify(result));
-    
-      setAppId(requestId);
-    }    
+        }    
   };
 
   const handleBack = () => {
@@ -293,6 +299,7 @@ export default function PlantingRequestForm() {
     setCurrentAddress("");
     setCurrentLocation(EAST_OAKLAND);
     setCurrentTrees([tree])
+    setAppId()
 
     navigate('/plant');
   }
@@ -308,10 +315,16 @@ export default function PlantingRequestForm() {
           ))}
         </Stepper>
         <React.Fragment>
-          {activeStep === steps.length ? (
+          {activeStep === steps.length ? <>
+            {appId === undefined ? (
+              <div style={{ display: "block", margin: "auto", height: "20vh", textAlign: "center" }}>
+                <h3>Loading...</h3>
+                <CircularProgress color="primary" />
+              </div>
+            ) : (
             <React.Fragment>
               <Typography variant="h6">
-                Your application number is #{appId.slice(0, 4)}. We have emailed your application
+                Your application id is {appId}. We have emailed your application
                 confirmation, and will send you an update when your permit has been approved.
               </Typography>
               <Box m={1} display="flex" flexDirection="column" justifyContent="center" alignItems="center">
@@ -333,7 +346,7 @@ export default function PlantingRequestForm() {
               </Box>
               <ImageCarousel sx={{width: "800px"}}/>
             </React.Fragment>
-          ) : (
+          )} </> : (
             <React.Fragment>
               {getStepContent(activeStep)}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

@@ -109,7 +109,8 @@ export async function createTreePlantingRequest(prs, provider) {
     provider,
     body: JSON.stringify(requests)
   }).catch(console.error)
+  let body = await res.json()
 
 
-  return 'request succeeded';
+  return body.id;
 }

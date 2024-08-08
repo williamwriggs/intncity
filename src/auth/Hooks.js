@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
 
-    if(provider) {
+    if(connected) {
       const getAppInfo = async () => {
         const info = await signedFetch("/api/account", {provider})
         const i = await info.json()

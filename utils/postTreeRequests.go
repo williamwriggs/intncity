@@ -14,7 +14,7 @@ import (
 	"github.com/williamwriggs/intncity-treetoken/structs"
 )
 
-func PostTreeRequests(address string, requests []structs.TreeRequest) error {
+func PostTreeRequests(address string, requests []structs.TreeRequest) (string, error) {
 	godotenv.Load("../../../../.env")
 
 	fmt.Println("=======REQUESTS========")
@@ -24,7 +24,7 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 	acc, err := GetAccount(address)
 	if err != nil {
 		fmt.Println("error getting user account:", err)
-		return err
+		return "", err
 	}
 
 	authLevel := acc.Fields.AuthLevel
@@ -33,6 +33,7 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 	}
 
 	postObject := structs.TreePostObject{}
+	id := uuid.New()
 
 	for _, request := range requests {
 
@@ -41,8 +42,6 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 		} else {
 			request.Status = "Verified"
 		}
-
-		id := uuid.New()
 
 		request.RequestId = id.String()
 
@@ -65,7 +64,7 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 
 	body, err := json.Marshal(postObject)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	fmt.Println(string(body))
@@ -79,7 +78,7 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 
 	if err != nil {
 		err = fmt.Errorf("error creating post account request: %s", err)
-		return err
+		return "", err
 	}
 
 	key := os.Getenv("AIRTABLE_KEY")
@@ -95,18 +94,16 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) error {
 	if err != nil {
 		fmt.Println(err)
 		err = fmt.Errorf("error sending tree request: %s", err)
-		return err
+		return "", err
 	}
 
 	fmt.Println(res.Status)
 
-	bodyBytes, err := io.ReadAll(res.Body)
+	_, err = io.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
 		err = fmt.Errorf("error sending tree request: %s", err)
-		return err
+		return "", err
 	}
-	fmt.Println(string(bodyBytes))
 
-	return nil
+	return id.String(), nil
 }
