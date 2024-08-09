@@ -19,7 +19,7 @@ import { useLocalStorage, getStorageValue } from "@/utilities/useLocalStorage";
 // import StreetView from './StreetView';
 import UppyUploadWidget from './ImageUploadUppy';
 
-export default function Review() {
+export default function Review({ prError }) {
   const [notes, setNotes] = useLocalStorage("notes", "");
   const { currentTrees, setCurrentTrees} = useAppContext()
   const [selectedTree, setSelectedTree] = useState(0)
@@ -45,6 +45,9 @@ export default function Review() {
 
   return (
     <Stack spacing={2}>
+      <Typography variant="error" sx={{color: "red"}}>
+        { prError }
+      </Typography>
       <Typography variant="h6" gutterBottom>
         Your application summary
       </Typography>

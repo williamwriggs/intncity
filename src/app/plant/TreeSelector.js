@@ -65,11 +65,13 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
           borderRadius: "5px",
           display: "inline",
           marginLeft: "auto",
-          width: "10px"
+          width: "10px",
+          textAlign: "center",
+          padding: "5px"
         }}
         onClick={handleAddTree}
       >
-        +
+        <Typography fontSize="medium" sx={{margin: "auto"}}>New</Typography>
       </Button>
     );
   };
@@ -151,9 +153,11 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
     <Paper sx={{ padding: 4 }}>
       <Grid container spacing={2}>
         <Grid xs={12} item>
-          <div style={{display: "grid", gridTemplateColumns: "4fr 1fr", marginBottom: "10px"}}>
-            <Typography variant="h6" sx={{display: "inline"}}>Tree species</Typography>
-            <AddTreeButton />
+          <div style={{display: "grid", gridTemplateColumns: "4fr 1.5fr", marginBottom: "10px"}}>
+            <Typography variant="h6" sx={{display: "inline"}}>Tree Species</Typography>
+            <div style={{textAlign: "right", marginRight: "20px"}}>
+              <AddTreeButton />
+            </div>
           </div>
         </Grid>
         {isLoaded ? (

@@ -51,7 +51,7 @@ export default function Profile() {
             console.log("recovered address: " + recoveredAddress)
         }
 
-        if(auth?.user?.connected === false || !auth?.provider) {
+        if(auth?.provider && auth?.user?.connected === false) {
             redirect("/")
         } else if(auth?.user?.connected === true) {
             getUserInfo()

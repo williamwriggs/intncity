@@ -51,13 +51,14 @@ const EAST_OAKLAND = {lat: 37.755443,lng: -122.184389};
 
 export default function PlantingRequestForm() {
   const auth = useAuth()
-  const { currentTrees, setCurrentTrees} = useAppContext()
+  const { currentTrees, setCurrentTrees } = useAppContext()
   const router = useRouter()
   const navigate = router.push;   
   const [activeStep, setActiveStep] = useLocalStorage("appStep", 0);  
   const [email] = useLocalStorage("email", "");  
   const [images, setImages] = useLocalStorage("images", []);
   const [appId, setAppId] = useState();
+  const [prError, setPrError] = useState();
   const [tree, setTree] = useLocalStorage("tree", false);
   const [currentLocation, setCurrentLocation] = useLocalStorage("location", EAST_OAKLAND);
   const [currentAddress, setCurrentAddress] = useLocalStorage("address", "");  
@@ -67,15 +68,81 @@ export default function PlantingRequestForm() {
   const [validated, setValidated] = React.useState(validateForm());
 
   useEffect(() => {
-    console.log(appId)
-  }, [appId])
+    const handleSubmitPrs = async () => {
+      const prs = getStorageValue("currentTrees", [])
 
+      console.log("requests: ", prs)
+  
+      // Create request in Airtable
+      let requestId;
+
+      try {
+        requestId = await createTreePlantingRequest(prs, auth.provider)
+        setAppId(requestId);
+
+        const t = {
+          name: null,
+          category: null,
+          longitude: null,
+          latitude: null,
+          questions: null,
+          images: null,
+          address: null,
+        };
+        setCurrentTrees([t])
+        setImages("");
+        setComplyAppropriateSpecies(false);
+        setComplyMinContainerSize(false);
+        setComplyWithStandard(false);
+        setCurrentAddress("");
+        setCurrentLocation(EAST_OAKLAND);
+        setCurrentTrees([tree])
+        setPrError();
+
+      } catch (e) {
+        requestId = "not found";
+        setPrError("error creating planting request: " + e);
+        setActiveStep(activeStep - 1);
+      }
+
+    }
+    if(activeStep === steps.length) {
+      if(validateForm()) {
+        handleSubmitPrs()
+      } else {
+        setActiveStep(0);
+      }
+    }
+
+    if(activeStep !== steps.length) {
+      setAppId();
+    }
+
+
+
+      // // Send confirmation email
+      // const shortId = requestId.slice(0, 4);
+      // const url = "/api/send-email?" + new URLSearchParams({
+      //   to: email,
+      //   app_id: shortId,
+      // });
+
+      // console.log("Sending email using URL: " + url);
+      // const response = await fetch(url, {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   method: "GET",
+      // });
+      // const result = await response.json();
+      // console.log("Email result: " + JSON.stringify(result));
+  }, [activeStep])
   useEffect(() => {
     setValidated(validateForm());
   }, [complyAppropriateSpecies, complyMinContainerSize, complyWithStandard, tree]);
 
   useEffect(() => {
-    if(activeStep === 0) {
+    if(activeStep === 0 || activeStep === steps.length - 1) {
       setValidated(validateForm())
     }
     if(activeStep === 1) {
@@ -111,7 +178,9 @@ export default function PlantingRequestForm() {
   }, [])
 
   useEffect(() => {
-    if(auth?.user?.connected === false || !auth?.provider) {
+    console.log(auth);
+    console.log(auth?.user);
+    if((auth && auth?.provider) && (auth?.user?.connected === false || !auth?.provider)) {
       router.replace("/")
     }
   }, [auth])
@@ -132,7 +201,7 @@ export default function PlantingRequestForm() {
                   currentAddress={currentAddress}
                   handleLocationChanged={onHandleLocationChanged}/>;
       case 2:
-        return <Review />;
+        return <Review prError={prError} />;
       default:
         throw new Error('Unknown step');
     }
@@ -142,6 +211,10 @@ export default function PlantingRequestForm() {
     let v = true
     for(const tree of currentTrees) {
       if(tree.name === null) {
+        v = false
+        break
+      }
+      if(activeStep === steps.length - 1 && (tree.images == null || tree.images?.length == 0)) {
         v = false
         break
       }
@@ -189,7 +262,6 @@ export default function PlantingRequestForm() {
     setActiveStep(activeStep + 1);
 
     if(activeStep === 0) {
-      console.log("active step 0")
       let newTrees = [...currentTrees]
       newTrees = newTrees.filter((value) => {
         return !!value.name
@@ -219,55 +291,7 @@ export default function PlantingRequestForm() {
       if (questions && questions != "undefined") {
         questions = JSON.parse(questions);
       }
-
-      let pr = {
-        email: email,
-        address: address,
-        latitude: location.lat,
-        longitude: location.lng,
-        tree: tree,
-        quantity: 1,
-        questions: questions,
-        images: images
-      };
-
-      const prs = getStorageValue("currentTrees", [])
-
-      console.log("requests: ", prs)
-
-      // Create request in Airtable
-      let requestId = await createTreePlantingRequest(prs, auth.provider);
-      console.log("id: " + requestId)
-      const t = {
-        name: null,
-        category: null,
-        longitude: null,
-        latitude: null,
-        questions: null,
-        images: null,
-        address: null,
-      };
-      setCurrentTrees([t])
-      setAppId(requestId);
-
-
-      // Send confirmation email
-      const shortId = requestId.slice(0, 4);
-      const url = "/api/send-email?" + new URLSearchParams({
-        to: email,
-        app_id: shortId,
-      });
-
-      console.log("Sending email using URL: " + url);
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "GET",
-      });
-      const result = await response.json();
-      console.log("Email result: " + JSON.stringify(result));
-        }    
+    }    
   };
 
   const handleBack = () => {
@@ -299,7 +323,8 @@ export default function PlantingRequestForm() {
     setCurrentAddress("");
     setCurrentLocation(EAST_OAKLAND);
     setCurrentTrees([tree])
-    setAppId()
+    setAppId();
+    setPrError();
 
     navigate('/plant');
   }
@@ -307,7 +332,7 @@ export default function PlantingRequestForm() {
   return (
     <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
       <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
-        <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
+        <Stepper activeStep={activeStep} prError={prError} sx={{ pt: 3, pb: 5 }}>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -324,7 +349,7 @@ export default function PlantingRequestForm() {
             ) : (
             <React.Fragment>
               <Typography variant="h6">
-                Your application id is {appId}. We have emailed your application
+                Your Application ID is #{appId}. We have emailed your application
                 confirmation, and will send you an update when your permit has been approved.
               </Typography>
               <Box m={1} display="flex" flexDirection="column" justifyContent="center" alignItems="center">
