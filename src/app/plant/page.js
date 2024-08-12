@@ -343,7 +343,7 @@ export default function PlantingRequestForm() {
           {activeStep === steps.length ? <>
             {appId === undefined ? (
               <div style={{ display: "block", margin: "auto", height: "20vh", textAlign: "center" }}>
-                <h3>Loading...</h3>
+                <h3>Submitting...</h3>
                 <CircularProgress color="primary" />
               </div>
             ) : (

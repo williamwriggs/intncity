@@ -19,7 +19,8 @@ import {
     TableContainer,
     Paper,
     TableBody,
-    CircularProgress
+    CircularProgress,
+    Container
 } from '@mui/material';
 import { useRouter } from "next/navigation";
 import signedFetch from "@/auth/signedFetch";
@@ -73,9 +74,18 @@ export default function Profile() {
 
     const tableCellStyle = {
         display: "inline-flex",
-        width: "50%",
+        maxWidth: "100%",
         padding: "20px",
+    }
 
+    const tableTextStyle = {
+        overflow: "hidden",
+        maxWidth: "100%"
+    }
+
+    const topTableCellStyle = {
+        borderTop: "1px solid lightGray",
+        ...tableCellStyle
     }
 
     return (
@@ -136,25 +146,41 @@ export default function Profile() {
                         boxShadow: "5px 2px 10px gray"
                     }}
                 >   
-                    <div style={{borderRadius: "50%", padding: "7px", paddingBottom: "3px", position: "relative", bottom: "7.5vh", backgroundColor: "white", boxShadow: "5px 5px 10px gray"}}>
+                    <Box maxWidth="sm" sx={{borderRadius: "50%", padding: "7px", paddingBottom: "2px", position: "relative", bottom: "7.5vh", backgroundColor: "white", boxShadow: "5px 5px 10px gray"}}>
                         {userInfo ? <img src={userInfo?.profileImage} style={{ position: "relative", borderRadius: "50%"}}/> : <div style={{height: "96px", width: "96px"}}/>}
-                    </div>
-                    <div style={{width: "70%", marginBottom: "40px", display: "grid", border: "1px solid lightGray", borderRadius: " 10px"}}>
-                            <div sx={{display: "block", width: "100%"}}>
-                                <div style={{...tableRowStyle, borderBottom: "1px solid lightGray"}}>
-                                    <div style={tableCellStyle}>Name: </div>
-                                    <div style={tableCellStyle} align="right">{userInfo?.name}</div>
-                                </div>
-                                <div style={{...tableRowStyle, borderBottom: "1px solid lightGray"}}>
-                                    <div style={tableCellStyle}>Email: </div>
-                                    <div align="right" style={tableCellStyle}>{userInfo?.email}</div>
-                                </div>
-                                <div style={tableRowStyle}>
-                                    <div style={tableCellStyle}>Auth Level: </div>
-                                    <div align="right" style={{...tableCellStyle, textTransform: "capitalize"}}>{appInfo?.fields.auth_level || <CircularProgress size="1rem" />}</div>
-                                </div>
-                            </div>
-                    </div>
+                    </Box>
+                    <Grid sx={{maxWidth: "80%", minWidth: "60%", marginBottom: "40px", display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid lightGray", borderRadius: " 10px"}}>
+                        <Box sx={tableCellStyle}>
+                            <Typography sx={tableTextStyle}>
+                                Name: 
+                            </Typography>
+                        </Box>
+                        <Box style={tableCellStyle} align="right">
+                            <Typography sx={tableTextStyle}>
+                                {userInfo?.name}
+                            </Typography>
+                        </Box>
+                        <Box style={topTableCellStyle}>
+                            <Typography sx={tableTextStyle}>
+                                Email: 
+                            </Typography>
+                        </Box>
+                        <Box align="right" style={topTableCellStyle}>
+                            <Typography sx={tableTextStyle}>
+                                {userInfo?.email}
+                            </Typography>
+                        </Box>
+                        <Box style={topTableCellStyle}>
+                            <Typography sx={tableTextStyle}>
+                                Level: 
+                            </Typography>
+                        </Box>
+                        <Box align="right" style={{...topTableCellStyle, textTransform: "capitalize"}}>
+                            <Typography sx={tableTextStyle}>
+                                {appInfo?.fields.auth_level || <CircularProgress size="1rem" />}
+                            </Typography>
+                        </Box>
+                    </Grid>
                     {/* <Button 
                         variant="contained" 
                         size="large" 

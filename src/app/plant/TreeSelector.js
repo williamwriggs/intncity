@@ -71,7 +71,7 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
         }}
         onClick={handleAddTree}
       >
-        <Typography fontSize="medium" sx={{margin: "auto"}}>New</Typography>
+        <Typography fontSize="medium" sx={{margin: "auto"}}>Add</Typography>
       </Button>
     );
   };
@@ -124,9 +124,12 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
               value={tree.name ? tree : undefined}
               options={plants || [{ name: "No plants found" }]}
               autoHighlight
-              getOptionLabel={(option) => option.name}
+              getOptionLabel={(option) => {
+                return option.name
+              }
+            }
               renderOption={(props, option) => (
-                <li {...props} key={option.name} value={option}>
+                <li {...props} key={option.name} value={option} style={{textTransform: "capitalize"}}>
                   {option.name}
                 </li>
               )}

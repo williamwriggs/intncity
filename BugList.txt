@@ -9,3 +9,4 @@
 - Don't allow submit until all images finished uploading
     -- Fixed
 - Fix profile screen for small sizes
+    -- Fixed
