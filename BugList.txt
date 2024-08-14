@@ -11,3 +11,4 @@
 - Fix profile screen for small sizes
     -- Fixed
 - Capitalize trees in tree selector after chosen.
+    -- Fixed

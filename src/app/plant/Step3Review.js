@@ -21,14 +21,30 @@ import UppyUploadWidget from './ImageUploadUppy';
 
 export default function Review({ prError }) {
   const [notes, setNotes] = useLocalStorage("notes", "");
-  const { currentTrees, setCurrentTrees} = useAppContext()
+  const { currentTrees, setCurrentTrees } = useAppContext()
+  const [currentTreeName, setCurrentTreeName] = useState();
   const [selectedTree, setSelectedTree] = useState(0)
 
   useEffect(() => {
     setCurrentTrees(getStorageValue("currentTrees", []))
+    let capitalize = (w) => {
+      let n = w.split(" ")
+      let name = "";
+      for(let word of n) {
+        if(word.length) {
+          name = name + " " + word[0].toUpperCase() + word.substring(1)
+        }
+      }
+      name = name.substring(1)
+      return name
+    }
+    setCurrentTreeName(capitalize(currentTrees[selectedTree].name))
   }, [selectedTree])
   
   const handleChangeNotes = (event) => {
+    const trees = [...currentTrees]
+    trees[selectedTree].questions = event.target.value
+    setCurrentTrees(trees)
     setNotes(event.target.value);
   }
 
@@ -85,12 +101,12 @@ export default function Review({ prError }) {
         Questions
     </Typography>
     <TextField
-        label="Do you have any questions or is there anything else you want to relay?"
+        label={"Do you have any questions or notes about the " + currentTreeName + "?"}
         multiline
         rows={5}
         variant="standard"
         onChange={handleChangeNotes}
-        value={notes} />
+        value={currentTrees[selectedTree].questions} />
     </Stack>
   );
 }

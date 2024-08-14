@@ -125,7 +125,15 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
               options={plants || [{ name: "No plants found" }]}
               autoHighlight
               getOptionLabel={(option) => {
-                return option.name
+                let n = option.name.split(" ")
+                let name = "";
+                for(let word of n) {
+                  if(word.length) {
+                    name = name + " " + word[0].toUpperCase() + word.substring(1)
+                  }
+                }
+                name = name.substring(1)
+                return name
               }
             }
               renderOption={(props, option) => (
