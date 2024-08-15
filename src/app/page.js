@@ -32,6 +32,29 @@ function Copyright() {
   );
 }
 
+const AdminPanelButton = ({ auth }) => {
+  let navigate = useRouter().push;
+
+  return (
+    <Button
+      color="secondary"
+      type="button"
+      size="large"
+      variant="contained"
+      sx={{
+        borderRadius: "5px",
+      }}
+      onClick={() => {
+        if(auth.app) {
+          navigate("/admin");
+        }
+      }}
+    >
+    Admin Panel
+  </Button>
+  )
+}
+
 const AuthButton = () => {
   const { currentTrees, setCurrentTrees} = useAppContext()
   const [activeStep, setActiveStep] = useLocalStorage("appStep", 0);
@@ -200,6 +223,11 @@ export default function StartTreePlantingRequest() {
               {!auth.connected && (
                 <Grid item align="right" color="transparent">
                   <AuthButton />
+                </Grid>
+              )}
+              {auth.app && (
+                <Grid item align="right" color="transparent">
+                  <AdminPanelButton auth={auth}/>
                 </Grid>
               )}
             </Box>

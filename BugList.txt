@@ -12,3 +12,4 @@
     -- Fixed
 - Capitalize trees in tree selector after chosen.
     -- Fixed
+- Remove Google API key from codebase
