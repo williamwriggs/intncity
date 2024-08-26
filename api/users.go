@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -31,6 +32,23 @@ func UsersHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
+		search := r.URL.Query().Get("search")
+		offset := r.URL.Query().Get("offset")
 
+		records, err := utils.GetAccounts(search, offset)
+		if err != nil {
+			fmt.Println("error getting account records:", err)
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+
+		fmt.Println(records)
+
+		bytes, err := json.Marshal(records)
+		if err != nil {
+			fmt.Println("error marshalling account records:", err)
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+
+		w.Write(bytes)
 	}
 }

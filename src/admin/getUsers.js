@@ -2,17 +2,26 @@ import signedFetch from "@/auth/signedFetch"
 
 export default async function getUsers(provider, options) {
 
-    const searchString = options.search ? "search=" + options.search : ""
-    const pageString = options.page ? "page=" + (options.page - 1) : ""
-    const connector = options.page && options.search ? "&" : ""
+    const params = new URLSearchParams()
+    params.append("offset", options.offset || "")
 
-    const url = "/api/users?" + searchString + connector + pageString
+    const search = options.search
+    if(search) {
+        params.append("search", search)
+    }
+
+    const url = "/api/users?" + params.toString()
     
     const res = await signedFetch(url, {
         provider
     })
 
-    const users = await res.json()
+    console.log(res)
+
+    const users = await res.json().catch(console.error)
+
+    console.log('users')
+    console.log(users)
 
     return users
 }

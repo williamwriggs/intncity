@@ -4,7 +4,7 @@ import sign from "@/auth/sign";
 import recover from "@/auth/recover";
 import Web3 from "web3";
 import appTheme from '@/theme.js';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import {
@@ -26,13 +26,16 @@ import {
 } from '@mui/material';
 import { useRouter } from "next/navigation";
 import signedFetch from "@/auth/signedFetch";
+import UserListDisplay from "@/app/admin/UserListDisplay";
+import TreeListDisplay from "@/app/admin/TreeListDisplay";
 import { Table } from "airtable";
-import { TabPanel, TabsContext, TabsList } from "@mui/base";
 
 export default function Profile() {
     const auth = useAuth();
     const [userInfo, setUserInfo] = useState()
-    const [tabValue, setTabValue] = useState("1")
+    const [tabValue, setTabValue] = useState(0)
+    const [users, setUsers] = useState([])
+    const [trees, setTrees] = useState([])
     const [appInfo, setAppInfo] = useState()
     const redirect = useRouter().replace
     const navigate = useRouter().push
@@ -79,6 +82,13 @@ export default function Profile() {
             {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
           </div>
         );
+    }
+
+    function a11yProps(index) {
+        return {
+          id: `simple-tab-${index}`,
+          'aria-controls': `simple-tabpanel-${index}`,
+        };
       }
 
     const tableRowStyle = {
@@ -176,12 +186,14 @@ export default function Profile() {
                 </Box> : <Box alignItems={"center"}>
                     <Box>
                         <Tabs value={tabValue} onChange={handleTabChange}>
-                            <Tab disableRipple label="Users" value="1"/>
-                            <Tab disableRipple label="Trees" value="2"/>
+                            <Tab disableRipple label="Users" {...a11yProps(0)}/>
+                            <Tab disableRipple label="Trees" {...a11yProps(1)}/>
                         </Tabs>
                     </Box>
-                    <CustomTabPanel value="1" index={0}></CustomTabPanel>
-                    <CustomTabPanel value="2" index={0}></CustomTabPanel>
+                    <CustomTabPanel value={tabValue} index={0}>
+                        <UserListDisplay />
+                    </CustomTabPanel>
+                    <CustomTabPanel value={tabValue} index={1}>test2</CustomTabPanel>
                 </Box>
             }
             </Box>
