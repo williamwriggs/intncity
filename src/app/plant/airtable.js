@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import Airtable from "airtable";
 import signedFetch from "@/auth/signedFetch";
 import { useAppContext } from "@/context/appContext";
+import sign from "@/auth/sign";
+import Web3 from "web3";
+import prToRawData from "@/auth/prToRawData";
 
 const API_KEY = "keyXYRXQVx9uUgYSX";
 const BASE_ID = "appTdrMAIaYDa7one";
@@ -80,9 +83,15 @@ export async function createTreePlantingRequest(prs, provider) {
   let requests = []
 
   for (const i in prs) {
+    const web3 = new Web3(provider)
+    const address = (await web3.eth.getAccounts())[0]
     const pr = prs[i]
+    const treeId = uuidv4()
+    const rawData = prToRawData(pr, treeId, address)
+    const sig = await sign(provider, rawData)
     const formatted = {
       "Request Date": Date.now(),
+      "Tree Id": treeId,
       "Tree Name": pr.name,
       "Tree Category": pr.category,
       "Location Longitude": pr.longitude,
@@ -90,7 +99,9 @@ export async function createTreePlantingRequest(prs, provider) {
       "Questions": pr.questions,
       "Status": "Request Received",
       "Images": [],
-      "Location Address": pr.address
+      "Location Address": pr.address,
+      "Raw Data": rawData,
+      "Signature": sig
     }
 
     for(const image of pr.images) {

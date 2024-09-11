@@ -13,7 +13,7 @@ export default function UserListDisplay() {
     const getUserPage = async () => {
         try {
             const u = await getUsers(auth.provider, {
-                offset: "itrwYPZYjvuRuWAtQ/recuuhj56jOgqGESg",
+                offset: null,
                 search: null
             })
             setUsers(u)

@@ -1,30 +1,32 @@
 import { useAuth } from '@/auth/Hooks';
 import { useEffect, useState } from 'react';
-import getUsers from '@/admin/getUsers';
+import getUnapprovedTrees from '@/admin/getUnapprovedTrees';
 import { Box, Typography } from '@mui/material';
 
 export default function TreeListDisplay() {
     const auth = useAuth();
-    const [users, setUsers] = useState();
-    const [usersError, setUsersError] = useState(null);
+    const [trees, setTrees] = useState();
+    const [treesError, setTreesError] = useState(null);
 
 
 
-    const getUserPage = async () => {
+    const getUnapprovedTreesPage = async () => {
         try {
-            const u = await getUsers(auth.provider, {
-                offset: 1,
-                search: null
+            const t = await getUnapprovedTrees(auth.provider, {
+                offset: null,
+                search: "peej@oleary.com"
             })
-            setUsers(u)
+            setTrees(t)
         } catch {
-            setUsersError("error getting users page")
+            setTreesError("error getting trees page")
         }
     }
 
     useEffect(() => {
-        if(auth.provider && auth.connected && !users) {
-            getUserPage()
+        if(auth.provider && auth.connected && !trees) {
+            console.log("fetching...")
+            console.log(auth)
+            getUnapprovedTreesPage()
         }
     }, [auth])
 

@@ -17,10 +17,6 @@ import (
 func PostTreeRequests(address string, requests []structs.TreeRequest) (string, error) {
 	godotenv.Load("../../../../.env")
 
-	fmt.Println("=======REQUESTS========")
-	fmt.Println(len(requests))
-	fmt.Println(requests[len(requests)-1])
-
 	acc, err := GetAccount(address)
 	if err != nil {
 		fmt.Println("error getting user account:", err)
@@ -37,15 +33,10 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) (string, e
 
 	for _, request := range requests {
 
-		if authLevel == "none" {
-			request.Status = "Requested"
-		} else {
-			request.Status = "Verified"
-		}
+		var requestor []string
 
 		request.RequestId = id.String()
-
-		request.Requestor = append(request.Requestor, acc.Id)
+		request.Requestor = append(requestor, acc.Id)
 
 		for _, image := range request.Images {
 			lat, long, err := ParseImageLocation(image.Url)
@@ -55,6 +46,34 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) (string, e
 				request.Lat = lat
 				request.Long = long
 			}
+		}
+
+		signed := false
+		recovered, err := RecoverSignature(request.RawData, request.Signature)
+		if err == nil && recovered == address {
+			signed = true
+		}
+
+		err = VerifyRawData(request, address)
+		if err != nil {
+			err = fmt.Errorf("could not verify raw data: ", err)
+			return "", err
+		}
+
+		var approver []string
+		if !signed {
+			request.Signature = ""
+			request.ApproverSignature = ""
+			request.Approver = approver
+		}
+		if authLevel == "none" {
+			request.Status = "Requested"
+			request.ApproverSignature = ""
+			request.Approver = approver
+		} else {
+			request.Status = "Verified"
+			request.Approver = request.Requestor
+			request.ApproverSignature = request.Signature
 		}
 
 		treeRecord := structs.TreePostRecord{Fields: request}
@@ -98,8 +117,13 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) (string, e
 	}
 
 	fmt.Println(res.Status)
+	if res.StatusCode != 200 {
+		err = fmt.Errorf("error sending tree request: POST rejected")
+		return "", err
+	}
 
-	_, err = io.ReadAll(res.Body)
+	body, err = io.ReadAll(res.Body)
+	fmt.Println(string(body))
 	if err != nil {
 		err = fmt.Errorf("error sending tree request: %s", err)
 		return "", err

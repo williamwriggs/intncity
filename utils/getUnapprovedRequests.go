@@ -12,16 +12,16 @@ import (
 	"github.com/williamwriggs/intncity-treetoken/structs"
 )
 
-func GetAccounts(search string, offset string) (*structs.AccountsResponse, error) {
+func GetUnapprovedRequests(search string, offset string) (*structs.TreeQueryResponse, error) {
 	godotenv.Load("../../../../.env")
 
 	baseId := os.Getenv("AIRTABLE_BASE_ID")
 	key := os.Getenv("AIRTABLE_KEY")
-	tableId := os.Getenv("AIRTABLE_AUTH_TABLE_ID")
+	tableId := os.Getenv("AIRTABLE_TREE_REQUESTS_TABLE_ID")
 
-	filter := ""
+	filter := `{Tree Name} = "Coast Live Oak"`
 	if search != "" {
-		filter = fmt.Sprintf(`AND(FIND("%s", {email}) > 0)`, search)
+		filter = fmt.Sprintf(`AND(FIND("%s", {Requestor Email}) > 0, %s)`, search, filter)
 	}
 
 	count := 10
@@ -30,7 +30,7 @@ func GetAccounts(search string, offset string) (*structs.AccountsResponse, error
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		err = fmt.Errorf("error creating getAccount request: %s", err)
+		err = fmt.Errorf("error creating getUnapprovedRequests request: %s", err)
 		return nil, err
 	}
 
@@ -41,8 +41,8 @@ func GetAccounts(search string, offset string) (*structs.AccountsResponse, error
 	if filter != "" {
 		query.Add("filterByFormula", filter)
 	}
-	// query.Add("sort[0][field]", "Created At")
-	// query.Add("sort[0][direction]", "asc")
+	query.Add(`sort[0][field]`, "Request Date")
+	query.Add(`sort[0][direction]`, "desc")
 	query.Add("pageSize", fmt.Sprintf("%d", count))
 	query.Add("offset", offset)
 	req.URL.RawQuery = query.Encode()
@@ -55,22 +55,22 @@ func GetAccounts(search string, offset string) (*structs.AccountsResponse, error
 
 	res, err := client.Do(req)
 	if err != nil {
-		err = fmt.Errorf("error sending getAccounts request: %s", err)
+		err = fmt.Errorf("error sending getUnapprovedRequests request: %s", err)
 		return nil, err
 	}
 
-	body := &structs.AccountsResponse{}
+	body := &structs.TreeQueryResponse{}
 
 	defer res.Body.Close()
 	bytes, err := io.ReadAll(res.Body)
 	if err != nil {
-		err = fmt.Errorf("error reading getAccounts response body: %s", err)
+		err = fmt.Errorf("error reading getUnapprovedRequests response body: %s", err)
 		return nil, err
 	}
 
 	err = json.Unmarshal(bytes, body)
 	if err != nil {
-		err = fmt.Errorf("error unmarshalling getAccounts response body: %s", err)
+		err = fmt.Errorf("error unmarshalling getUnapprovedRequests response body: %s", err)
 		return nil, err
 	}
 

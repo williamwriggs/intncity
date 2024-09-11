@@ -52,6 +52,10 @@ export const AuthProvider = ({ children }) => {
   const [connected, setConnected] = useState(false)
 
   useEffect(() => {
+    console.log(app)
+  }, [app])
+
+  useEffect(() => {
 
     const init = async () => {
       await web3auth.init()
@@ -60,6 +64,7 @@ export const AuthProvider = ({ children }) => {
       setConnected(web3auth.connected)
       setProvider(web3auth.provider)
       setUser(web3auth)
+      setApp(null)
     }
 
     init()
@@ -134,6 +139,7 @@ export const AuthProvider = ({ children }) => {
       console.log("unable to connect")
       setProvider(null)
       setUser(null)
+      setApp(null)
     }
   };
 
@@ -150,6 +156,7 @@ export const AuthProvider = ({ children }) => {
     setProvider(null);
     setUser(null);
     setConnected(false);
+    setApp(null)
   };
 
   const Connected = () => {

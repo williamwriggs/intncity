@@ -1,6 +1,6 @@
 import signedFetch from "@/auth/signedFetch"
 
-export default async function getUsers(provider, options) {
+export default async function getUnapprovedTrees(provider, options) {
 
     const params = new URLSearchParams()
 
@@ -8,13 +8,12 @@ export default async function getUsers(provider, options) {
     if(offset) {
         params.append("offset", offset)
     }
-
     const search = options.search
     if(search) {
         params.append("search", search)
     }
 
-    const url = "/api/users?" + params.toString()
+    const url = "/api/request?" + params.toString()
     
     const res = await signedFetch(url, {
         provider
@@ -22,10 +21,10 @@ export default async function getUsers(provider, options) {
 
     console.log(res)
 
-    const users = await res.json().catch(console.error)
+    const unapprovedTrees = await res.json().catch(console.error)
 
-    console.log('users')
-    console.log(users)
+    console.log('unapproved requests')
+    console.log(unapprovedTrees)
 
-    return users
+    return unapprovedTrees
 }

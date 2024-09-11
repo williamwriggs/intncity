@@ -2,12 +2,9 @@ package middleware
 
 import (
 	"bytes"
-	"encoding/hex"
 	"io"
-	"strconv"
 
-	"github.com/umbracle/ethgo"
-	"github.com/umbracle/ethgo/wallet"
+	"github.com/williamwriggs/intncity-treetoken/utils"
 
 	"errors"
 	"fmt"
@@ -75,31 +72,10 @@ func AuthMiddleware(r *http.Request) (string, error) {
 		signer = fmt.Sprintf("%s%s", body, time)
 	}
 
-	prefixed := []byte("\x19Ethereum Signed Message:\n" + strconv.Itoa(len(signer)) + signer)
-
-	hash := ethgo.Keccak256(prefixed)
-
-	unPrefixedSig, found := strings.CutPrefix(sig, "0x")
-	if !found {
-		unPrefixedSig = sig
-	}
-
-	sigBytes, err := hex.DecodeString(unPrefixedSig)
+	address, err := utils.RecoverSignature(signer, sig)
 	if err != nil {
 		return "", err
 	}
-
-	if sigBytes[64] >= 27 {
-		sigBytes[64] -= 27
-	}
-
-	rec, err := wallet.Ecrecover(hash, sigBytes)
-
-	if err != nil {
-		return "", err
-	}
-
-	address := rec.String()
 
 	if address != acc {
 		err = errors.New("error: recovered address does not match given address")
