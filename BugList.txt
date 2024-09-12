@@ -13,3 +13,27 @@
 - Capitalize trees in tree selector after chosen.
     -- Fixed
 - Remove Google API key from codebase
+
+
+FINAL CHANGES
+======================
+
+Admin Panel
+ - Modal
+   - Implement generic modal
+ - Users
+    - Finish patch user endpoint
+    - Create User List Display
+      - Display users by email | auth_level only, when clicked on pull up user modal
+      - Implement user modal from generic modal with ability to edit auth_level and save
+ - Trees
+    - Create patch trees endpoint
+    - Create Unapproved Trees List Display
+      - Display trees by planterEmail | address | treeName + category, when clicked pull up modal
+      - Implement trees modal from generic modal with ability to send approval
+ - Data
+    - Implement ability to download all tree data in csv format
+
+Planting Flow
+ - Map View
+    - Implement drag and drop for map view pins

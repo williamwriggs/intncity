@@ -29,16 +29,24 @@ import signedFetch from "@/auth/signedFetch";
 import UserListDisplay from "@/app/admin/UserListDisplay";
 import TreeListDisplay from "@/app/admin/TreeListDisplay";
 import { Table } from "airtable";
+import GenericModal from "./GenericModal";
+import "./tabStyle.css"
 
 export default function Profile() {
     const auth = useAuth();
     const [userInfo, setUserInfo] = useState()
     const [tabValue, setTabValue] = useState(0)
     const [users, setUsers] = useState([])
-    const [trees, setTrees] = useState([])
     const [appInfo, setAppInfo] = useState()
     const redirect = useRouter().replace
     const navigate = useRouter().push
+
+    const [trees, setTrees] = useState([]);
+    const [treesOffsets, setTreesOffsets] = useState([]);
+    const [treesSearch, setTreesSearch] = useState(null);
+    const [treesPage, setTreesPage] = useState(0)
+    const [lastTreesPage, setLastTreesPage] = useState(undefined)
+    const [treesError, setTreesError] = useState(null);
 
     useEffect(() => {
         if(appInfo && appInfo?.fields?.auth_level !== "admin") {
@@ -183,24 +191,37 @@ export default function Profile() {
             </Box>
             { !appInfo ? <Box sx={{display: "flex", height: "60vh", textAlign: "center", margin: "auto"}}>
                     <CircularProgress color="primary" />
-                </Box> : <Box alignItems={"center"}>
+                </Box> : <Box alignItems={"center"} width={"80%"}>
                     <Box>
                         <Tabs value={tabValue} onChange={handleTabChange}>
                             <Tab disableRipple label="Users" {...a11yProps(0)}/>
                             <Tab disableRipple label="Trees" {...a11yProps(1)}/>
                         </Tabs>
                     </Box>
-                    <CustomTabPanel value={tabValue} index={0}>
-                        <UserListDisplay />
-                    </CustomTabPanel>
-                    <CustomTabPanel value={tabValue} index={1}>test2</CustomTabPanel>
+                    <Box>
+                        <CustomTabPanel value={tabValue} index={0}>
+                            {/* <UserListDisplay /> */}
+                        </CustomTabPanel>
+                        <CustomTabPanel value={tabValue} index={1}>
+                            <TreeListDisplay     
+                                trees={trees} 
+                                setTrees={setTrees}
+                                offsets={treesOffsets}
+                                setOffsets={setTreesOffsets}
+                                search={treesSearch}
+                                setSearch={setTreesSearch}
+                                page={treesPage}
+                                setPage={setTreesPage}
+                                lastPage={lastTreesPage}
+                                setLastPage={setLastTreesPage}
+                                setTreesError={setTreesError}
+                            />
+                        </CustomTabPanel>
+                    </Box>
                 </Box>
             }
             </Box>
             </Grid>
-
-
-        
                 </Grid>
             </ThemeProvider>
         </>

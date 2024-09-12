@@ -69,17 +69,21 @@ type TreeResponseRecord struct {
 }
 
 type TreeResponseFields struct {
-	RequestId   string      `json:"Request ID"`
-	TreeId      string      `json:"Tree ID"`
-	RequestDate string      `json:"Request Date"`
-	Requestor   []string    `json:"Requestor"`
-	Status      string      `json:"Status"`
-	Tree        string      `json:"Tree Name"`
-	Questions   string      `json:"Questions"`
-	Images      []TreeImage `json:"Images"`
-	Lat         float64     `json:"Location Latitude"`
-	Address     string      `json:"Location Address"`
-	Long        float64     `json:"Location Longitude"`
+	RequestId        string      `json:"Request ID"`
+	TreeId           string      `json:"Tree ID"`
+	RequestDate      string      `json:"Request Date"`
+	Requestor        []string    `json:"Requestor"`
+	RequestorAddress []string    `json:"Requestor Address"`
+	RequestorEmail   []string    `json:"Requestor Email"`
+	RequestorName    []string    `json:"Requestor Name"`
+	Status           string      `json:"Status"`
+	Tree             string      `json:"Tree Name"`
+	TreeCategory     string      `json:"Tree Category"`
+	Questions        string      `json:"Questions"`
+	Images           []TreeImage `json:"Images"`
+	Lat              float64     `json:"Location Latitude"`
+	Address          string      `json:"Location Address"`
+	Long             float64     `json:"Location Longitude"`
 }
 
 type TreeImage struct {

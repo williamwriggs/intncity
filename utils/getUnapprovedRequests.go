@@ -19,7 +19,7 @@ func GetUnapprovedRequests(search string, offset string) (*structs.TreeQueryResp
 	key := os.Getenv("AIRTABLE_KEY")
 	tableId := os.Getenv("AIRTABLE_TREE_REQUESTS_TABLE_ID")
 
-	filter := `{Tree Name} = "Coast Live Oak"`
+	filter := `{Approver Signature} = ""`
 	if search != "" {
 		filter = fmt.Sprintf(`AND(FIND("%s", {Requestor Email}) > 0, %s)`, search, filter)
 	}
