@@ -84,6 +84,7 @@ type TreeResponseFields struct {
 	Lat              float64     `json:"Location Latitude"`
 	Address          string      `json:"Location Address"`
 	Long             float64     `json:"Location Longitude"`
+	RawData          string      `json:"Raw Data"`
 }
 
 type TreeImage struct {

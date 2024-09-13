@@ -36,7 +36,6 @@ export default function Profile() {
     const auth = useAuth();
     const [userInfo, setUserInfo] = useState()
     const [tabValue, setTabValue] = useState(0)
-    const [users, setUsers] = useState([])
     const [appInfo, setAppInfo] = useState()
     const redirect = useRouter().replace
     const navigate = useRouter().push
@@ -47,6 +46,16 @@ export default function Profile() {
     const [treesPage, setTreesPage] = useState(0)
     const [lastTreesPage, setLastTreesPage] = useState(undefined)
     const [treesError, setTreesError] = useState(null);
+    const [treesLoading, setTreesLoading] = useState(false);
+
+    const [users, setUsers] = useState([]);
+    const [usersOffsets, setUsersOffsets] = useState([]);
+    const [usersSearch, setUsersSearch] = useState(null);
+    const [usersPage, setUsersPage] = useState(0)
+    const [lastUsersPage, setLastUsersPage] = useState(undefined)
+    const [usersError, setUsersError] = useState(null);
+    const [usersLoading, setUsersLoading] = useState(false);
+
 
     useEffect(() => {
         if(appInfo && appInfo?.fields?.auth_level !== "admin") {
@@ -200,7 +209,21 @@ export default function Profile() {
                     </Box>
                     <Box>
                         <CustomTabPanel value={tabValue} index={0}>
-                            {/* <UserListDisplay /> */}
+                            <UserListDisplay 
+                                users={users} 
+                                setUsers={setUsers}
+                                offsets={usersOffsets}
+                                setOffsets={setUsersOffsets}
+                                search={usersSearch}
+                                setSearch={setUsersSearch}
+                                page={usersPage}
+                                setPage={setUsersPage}
+                                lastPage={lastUsersPage}
+                                setLastPage={setLastUsersPage}
+                                setUsersError={setUsersError}
+                                usersLoading={usersLoading}
+                                setUsersLoading={setUsersLoading}
+                            />
                         </CustomTabPanel>
                         <CustomTabPanel value={tabValue} index={1}>
                             <TreeListDisplay     
@@ -215,6 +238,8 @@ export default function Profile() {
                                 lastPage={lastTreesPage}
                                 setLastPage={setLastTreesPage}
                                 setTreesError={setTreesError}
+                                treesLoading={treesLoading}
+                                setTreesLoading={setTreesLoading}
                             />
                         </CustomTabPanel>
                     </Box>

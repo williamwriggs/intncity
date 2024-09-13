@@ -84,6 +84,41 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.Write(body)
+
+	case "PATCH":
+		account, err := utils.GetAccount(address)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if account.Fields.AuthLevel != "admin" {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		var updateRequest structs.AccountUpdateRequest
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		err = json.Unmarshal(body, &updateRequest)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		err = utils.PatchUser(updateRequest, account)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		w.WriteHeader(http.StatusAccepted)
+		return
 	default:
 		w.WriteHeader(405)
 	}

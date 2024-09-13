@@ -22,3 +22,21 @@ type AccountsResponse struct {
 	Records []AccountRecord `json:"records"`
 	Offset  string          `json:"offset"`
 }
+
+type AccountUpdateRequest struct {
+	Id        string `json:"id"`
+	AuthLevel string `json:"authLevel"`
+}
+
+type AccountUpdate struct {
+	Records []AccountUpdateRecord `json:"records"`
+}
+
+type AccountUpdateRecord struct {
+	Id     string              `json:"id"`
+	Fields AccountUpdateFields `json:"fields"`
+}
+
+type AccountUpdateFields struct {
+	AuthLevel string `json:"auth_level"`
+}

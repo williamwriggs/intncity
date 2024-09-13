@@ -5,10 +5,7 @@ import Modal from '@mui/material/Modal';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 
-export default function GenericModal({ children }) {
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+export default function GenericModal({ children, open, handleClose }) {
 
     const modalPageStyle = {
         width: "80vw",
@@ -16,7 +13,8 @@ export default function GenericModal({ children }) {
         borderRadius: "10px",
         height: "80vh",
         margin: "auto",
-        padding: "2vw"
+        padding: "20px",
+        overflow: "scroll"
     }
 
     const closeIconStyle = {
@@ -32,8 +30,6 @@ export default function GenericModal({ children }) {
     }
 
     return (
-        <>
-        <Button onClick={handleOpen}>Open modal</Button>
         <Modal
             open={open}
             onClose={handleClose}
@@ -49,7 +45,6 @@ export default function GenericModal({ children }) {
                 </Box>
             </>
         </Modal>
-        </>
     )
 }
 

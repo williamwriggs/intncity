@@ -35,10 +35,17 @@ export default function Profile() {
     const [userInfo, setUserInfo] = useState()
     const [tabValue, setTabValue] = useState(0)
     const [users, setUsers] = useState([])
-    const [trees, setTrees] = useState([])
     const [appInfo, setAppInfo] = useState()
     const redirect = useRouter().replace
     const navigate = useRouter().push
+
+    const [trees, setTrees] = useState([]);
+    const [treesOffsets, setTreesOffsets] = useState([]);
+    const [treesSearch, setTreesSearch] = useState(null);
+    const [treesPage, setTreesPage] = useState(0)
+    const [lastTreesPage, setLastTreesPage] = useState(undefined)
+    const [treesError, setTreesError] = useState(null);
+    const [treesLoading, setTreesLoading] = useState(false);
 
     useEffect(() => {
         if(appInfo && appInfo?.fields?.auth_level !== "verifier") {
@@ -183,8 +190,22 @@ export default function Profile() {
             </Box>
             { !appInfo ? <Box sx={{display: "flex", height: "60vh", textAlign: "center", margin: "auto"}}>
                     <CircularProgress color="primary" />
-                </Box> : <Box alignItems={"center"}>
-                    <TreeListDisplay />
+                </Box> : <Box alignItems={"center"} width={"80%"}>
+                    <TreeListDisplay     
+                        trees={trees} 
+                        setTrees={setTrees}
+                        offsets={treesOffsets}
+                        setOffsets={setTreesOffsets}
+                        search={treesSearch}
+                        setSearch={setTreesSearch}
+                        page={treesPage}
+                        setPage={setTreesPage}
+                        lastPage={lastTreesPage}
+                        setLastPage={setLastTreesPage}
+                        setTreesError={setTreesError}
+                        treesLoading={treesLoading}
+                        setTreesLoading={setTreesLoading}
+                    />
                 </Box>
             }
             </Box>

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import getUnapprovedTrees from '@/admin/getUnapprovedTrees';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Input, Button, CircularProgress } from '@mui/material';
 import * as React from 'react';
+import TreeModal from './TreeModal';
 
 export default function TreeListDisplay({
     trees, setTrees,
@@ -11,14 +12,22 @@ export default function TreeListDisplay({
     page, setPage,
     lastPage, setLastPage,
     treesError, setTreesError,
+    treesLoading, setTreesLoading
 }) {
 
-    const [searchString, setSearchString] = useState()
-    const [loading, setLoading] = useState(false)
+    const [searchString, setSearchString] = useState(search || "")
+    const [loading, setLoading] = useState(treesLoading || false)
+    const [treeModalOpen, setTreeModalOpen] = useState(false)
+    const [modalTree, setModalTree] = useState(null)
     const auth = useAuth();
 
     let currentSearch = null;
     let currentOffset = null;
+
+    const handleTreeModalClose = () => {
+        setModalTree(null)
+        setTreeModalOpen(false)
+    }
 
     useEffect(() => {
         console.log(page)
@@ -28,9 +37,7 @@ export default function TreeListDisplay({
 
     const handleOffset = (offset, newPage) => {
         if(offset === "") {
-            setLastPage(newPage)
-            console.log(page)
-            console.log(lastPage)
+            setLastPage(newPage || 0)
         }
         let found = false
         for(let i = 0; i < offsets.length; i++) {
@@ -47,6 +54,7 @@ export default function TreeListDisplay({
 
     const getUnapprovedTreesPage = async (search, offset, reset, newPage) => {
         setLoading(true)
+        setTreesLoading(true)
         try {
             const t = await getUnapprovedTrees(auth.provider, {
                 offset,
@@ -56,10 +64,14 @@ export default function TreeListDisplay({
                 setTrees([t.records])
                 setOffsets([t.offset])
                 setPage(0)
+                setSearch("")
                 if(t.offset === "") {
                     setLastPage(0)
+                } else {
+                    setLastPage(undefined)
                 }
             } else {
+                console.log("no reset")
                 setTrees([...trees, t.records])
                 handleOffset(t.offset, newPage)
             }
@@ -69,6 +81,12 @@ export default function TreeListDisplay({
             setTreesError("error getting trees page")
         }
         setLoading(false)
+        setTreesLoading(false)
+    }
+
+    const approveRow = () => {
+        resetTrees()
+        handleTreeModalClose()
     }
 
     useEffect(() => {
@@ -76,11 +94,7 @@ export default function TreeListDisplay({
     }, [trees])
     
     const resetTrees = () => {
-        setTrees([])
-        setOffsets([])
-        setSearch([])
-        setPage(0)
-        setLastPage(undefined)
+        getUnapprovedTreesPage(null, null, true, 0)
     }
 
     const handleSearch = (e) => {
@@ -88,7 +102,6 @@ export default function TreeListDisplay({
         setSearch(searchString)
         const s = searchString === "" ? null : searchString
         getUnapprovedTreesPage(s, null, true, 0)
-        setLastPage(undefined)
     }
 
     const handleNext = async () => {
@@ -126,11 +139,13 @@ export default function TreeListDisplay({
             <Button color="secondary" type="submit" variant="contained" sx={{borderRadius: "5px"}}>Go</Button>
         </form>
         { loading ? 
-            <Box sx={{display: "flex", height: "60vh", textAlign: "center", margin: "auto"}}>
+            <Box sx={{display: "block", height: "60vh", textAlign: "center", margin: "auto"}}>
+            <Typography>Loading...</Typography>
             <CircularProgress color="primary" size="small" />
             </Box>
             :
             <>
+            <TreeModal open={treeModalOpen} tree={modalTree} handleClose={handleTreeModalClose} approveFunction={approveRow} />
             <TableContainer component={Paper} sx={{width: "100%", maxHeight: "40vh"}}>
             <Table sx={{width: "100%"}} size="small" aria-label="simple table">
                 <TableHead>
@@ -142,10 +157,14 @@ export default function TreeListDisplay({
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                {trees[page]?.map((row) => (
+                {trees[page]?.map((row, index) => (
                     <TableRow
                     key={row.id}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    onClick={() => {
+                        setModalTree(row)
+                        setTreeModalOpen(true)
+                    }}
+                    sx={{ cursor: "pointer", '&:last-child td, &:last-child th': { border: 0 }, '&:hover': {backgroundColor: "whitesmoke"} }}
                     >
                         <TableCell component="th" scope="row">
                             {row.fields["Requestor Email"][0]}
@@ -164,9 +183,7 @@ export default function TreeListDisplay({
                 </div>
                 <div style={{textAlign: "center"}}>
                     <Button onClick={() => {
-                        setTrees([])
                         resetTrees()
-                        getUnapprovedTreesPage(null, null, true)
                     }}>Reset</Button>
                 </div>
                 <div style={{textAlign: "right"}}>

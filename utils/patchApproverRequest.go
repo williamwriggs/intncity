@@ -14,6 +14,7 @@ import (
 
 func PatchApproverRequest(request structs.ApproverRequestFields, account *structs.AccountRecord) error {
 	godotenv.Load("../../../../.env")
+	fmt.Println(request.TreeId)
 
 	tree, err := GetTree(request.TreeId)
 	if err != nil {
@@ -26,18 +27,20 @@ func PatchApproverRequest(request structs.ApproverRequestFields, account *struct
 		return err
 	}
 
-	recovered, err := RecoverSignature(tree.Fields.Status, request.Signature)
+	recovered, err := RecoverSignature(tree.Fields.RawData, request.Signature)
 	if err != nil {
 		err = fmt.Errorf("error recovering signature: ", err)
 		return err
 	}
 	if recovered != account.Fields.Address {
 		err = fmt.Errorf("error validating signature: %s does not match %s", recovered, account.Fields.Address)
+		return err
 	}
 
 	var approver []string
 
-	request.Approver = append(approver, recovered)
+	request.TreeId = tree.Fields.TreeId
+	request.Approver = append(approver, account.Id)
 	request.Status = "Verified"
 
 	var formattedRequest structs.ApproverRequests
@@ -45,9 +48,12 @@ func PatchApproverRequest(request structs.ApproverRequestFields, account *struct
 
 	formattedRecord.Id = tree.Id
 	formattedRecord.Fields = request
-	formattedRequest.Records[0] = formattedRecord
+	formattedRequest.Records = append(formattedRequest.Records, formattedRecord)
 
-	body, err := json.Marshal(request)
+	fmt.Println(formattedRequest)
+	fmt.Println("|||||||||||||||")
+
+	body, err := json.Marshal(formattedRequest)
 	if err != nil {
 		err = fmt.Errorf("error marshalling approver request: ", err)
 		return err
@@ -76,11 +82,15 @@ func PatchApproverRequest(request structs.ApproverRequestFields, account *struct
 		Timeout: time.Second * 10,
 	}
 
-	_, err = client.Do(req)
+	res, err := client.Do(req)
 	if err != nil {
 		fmt.Println(err)
 		err = fmt.Errorf("error sending patch request: %s", err)
 		return err
+	}
+
+	if res.StatusCode != 200 {
+		fmt.Println(res.Status)
 	}
 
 	return nil

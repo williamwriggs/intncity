@@ -19,9 +19,9 @@ func GetAccounts(search string, offset string) (*structs.AccountsResponse, error
 	key := os.Getenv("AIRTABLE_KEY")
 	tableId := os.Getenv("AIRTABLE_AUTH_TABLE_ID")
 
-	filter := ""
+	filter := `FIND("", {email}) > 0`
 	if search != "" {
-		filter = fmt.Sprintf(`AND(FIND("%s", {email}) > 0)`, search)
+		filter = fmt.Sprintf(`AND(FIND("%s", {email}) > 0, %s)`, search, filter)
 	}
 
 	count := 10

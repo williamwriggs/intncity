@@ -47,7 +47,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(fmt.Sprintf("{\"id\": \"%s\"}", id)))
 
-	case "PUT":
+	case "PATCH":
 		account, err := utils.GetAccount(address)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -67,7 +67,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = json.Unmarshal(body, approverRequest)
+		err = json.Unmarshal(body, &approverRequest)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return

@@ -21,7 +21,7 @@ func GetUnapprovedRequests(search string, offset string) (*structs.TreeQueryResp
 
 	filter := `{Approver Signature} = ""`
 	if search != "" {
-		filter = fmt.Sprintf(`AND(FIND("%s", {Requestor Email}) > 0, %s)`, search, filter)
+		filter = fmt.Sprintf(`AND(FIND("%s", {Requestor Email}&"") > 0, %s)`, search, filter)
 	}
 
 	count := 10

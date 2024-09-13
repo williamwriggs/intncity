@@ -19,9 +19,7 @@ func GetTree(id string) (*structs.TreeResponseRecord, error) {
 	key := os.Getenv("AIRTABLE_KEY")
 	tableId := os.Getenv("AIRTABLE_TREE_REQUESTS_TABLE_ID")
 
-	url := fmt.Sprintf("https://api.airtable.com/v0/%s/%s", baseId, tableId)
-
-	filter := fmt.Sprintf(`Tree ID = "%s"`, id)
+	url := fmt.Sprintf("https://api.airtable.com/v0/%s/%s/%s", baseId, tableId, id)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -33,7 +31,6 @@ func GetTree(id string) (*structs.TreeResponseRecord, error) {
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", key))
 
 	query := req.URL.Query()
-	query.Add("filterByFormula", filter)
 	req.URL.RawQuery = query.Encode()
 
 	client := http.Client{
@@ -46,7 +43,7 @@ func GetTree(id string) (*structs.TreeResponseRecord, error) {
 		return nil, err
 	}
 
-	records := &structs.TreeQueryResponse{}
+	record := &structs.TreeResponseRecord{}
 
 	defer res.Body.Close()
 	bytes, err := io.ReadAll(res.Body)
@@ -55,11 +52,13 @@ func GetTree(id string) (*structs.TreeResponseRecord, error) {
 		return nil, err
 	}
 
-	err = json.Unmarshal(bytes, records)
+	err = json.Unmarshal(bytes, record)
 	if err != nil {
 		err = fmt.Errorf("error unmarshalling getTree response body: %s", err)
 		return nil, err
 	}
 
-	return &records.Records[0], nil
+	fmt.Println(record)
+
+	return record, nil
 }
