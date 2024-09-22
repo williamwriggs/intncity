@@ -6,6 +6,7 @@ import { useAppContext } from "@/context/appContext";
 import sign from "@/auth/sign";
 import Web3 from "web3";
 import prToRawData from "@/auth/prToRawData";
+import exifr from "exifr";
 
 const API_KEY = "keyXYRXQVx9uUgYSX";
 const BASE_ID = "appTdrMAIaYDa7one";
@@ -87,8 +88,6 @@ export async function createTreePlantingRequest(prs, provider) {
     const address = (await web3.eth.getAccounts())[0]
     const pr = prs[i]
     const treeId = uuidv4()
-    const rawData = prToRawData(pr, treeId, address)
-    const sig = await sign(provider, rawData)
     const formatted = {
       "Request Date": Date.now(),
       "Tree Id": treeId,
@@ -100,14 +99,27 @@ export async function createTreePlantingRequest(prs, provider) {
       "Status": "Request Received",
       "Images": [],
       "Location Address": pr.address,
-      "Raw Data": rawData,
-      "Signature": sig
+      "Raw Data": null,
+      "Signature": null
     }
 
+    let gps
+    
     for(const image of pr.images) {
       formatted["Images"].push({url: image, filename: pr.name + "_" + formatted["Request Date"] + "_" + i})
+      gps = await exifr.gps(image)
+      console.log(gps)
+      if(gps.latitude) {
+        formatted["Location Longitude"] = gps.longitude
+        formatted["Location Latitude"] = gps.latitude
+      }
     }
-
+    const rawData = prToRawData(pr, treeId, address, gps)
+    const sig = await sign(provider, rawData)
+    formatted["Raw Data"] = rawData
+    formatted["Signature"] = sig
+    
+    
     requests.push(formatted)
   }
 

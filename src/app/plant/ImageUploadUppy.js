@@ -5,12 +5,11 @@ import Uppy from '@uppy/core';
 import Tus from '@uppy/tus';
 import { Dashboard } from '@uppy/react';
 import ImageEditor from '@uppy/image-editor';
-import Webcam from "@uppy/webcam";
 import '@uppy/core/dist/style.css';
 import '@uppy/dashboard/dist/style.css';
 import '@uppy/image-editor/dist/style.css';
 import '@uppy/core/dist/style.css';
-import '@uppy/webcam/dist/style.css'
+import { Button } from "@mui/material";
 
 export default function UppyUploadWidget({ treeIndex }) {
   const [images, setImages] = useLocalStorage("images", []);
@@ -47,7 +46,7 @@ export default function UppyUploadWidget({ treeIndex }) {
       restrictions: {
         maxFileSize: 5000000,
         maxNumberOfFiles: 3,
-        allowedFileTypes: ['image/*', '.heic',  '.heif'],      
+        allowedFileTypes: ['image/*'],      
         requiredMetaFields: [],
       },
       autoProceed: true,
@@ -62,21 +61,6 @@ export default function UppyUploadWidget({ treeIndex }) {
             responsive: true,
             croppedCanvasOptions: {},
         }
-    })
-    .use(Webcam, {
-      onBeforeSnapshot: () => Promise.resolve(),
-      countdown: false,
-      modes: [
-        'picture',
-      ],
-      mirror: true,
-      videoConstraints: {
-        facingMode: 'environment',
-        width: { min: 720, ideal: 1280, max: 1920 },
-        height: { min: 480, ideal: 800, max: 1080 },
-      },
-      showRecordingLength: false,
-      locale: {},
     })
     .use(Tus, {endpoint: 'https://tusd.tusdemo.net/files/',
         method: 'post',
@@ -123,17 +107,23 @@ export default function UppyUploadWidget({ treeIndex }) {
   });
 
   return (
+    <div style={{textAlign: "right"}}>
       <Dashboard
+        sx={{textAlign: "center"}}
         id="ImageUploader"
-        plugins={["Webcam", "ImageEditor", "FileInput"]}
+        plugins={["ImageEditor", "FileInput"]}
         uppy={uppy}
         width={'100%'}
-        doneButtonHandler={() => {
+        doneButtonHandler={null}
+        proudlyDisplayPoweredByUppy={false}
+        />
+        <Button sx={{margin: "10px"}} variant="contained" type="button" color="secondary" onClick={() => {
           uppy.cancelAll()
           setAttachments({})
           setTreeImages(treeIndex, null)
-        }}
-        proudlyDisplayPoweredByUppy={false}
-      />
+        }}>
+          Clear
+        </Button>
+      </div>
   )
 }

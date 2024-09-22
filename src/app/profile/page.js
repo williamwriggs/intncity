@@ -33,6 +33,50 @@ export default function Profile() {
     const redirect = useRouter().replace
     const navigate = useRouter().push
 
+    const AdminPanelButton = ({ auth }) => {
+      
+        return (
+            <Button
+            color="secondary"
+            type="button"
+            size="large"
+            variant="contained"
+            sx={{
+                borderRadius: "5px",
+            }}
+            onClick={() => {
+                if(auth.app) {
+                navigate("/admin");
+                }
+            }}
+            >
+            Admin Panel
+        </Button>
+        )
+    }
+      
+      const ApproverPanelButton = ({ auth }) => {
+      
+        return (
+          <Button
+            color="secondary"
+            type="button"
+            size="large"
+            variant="contained"
+            sx={{
+              borderRadius: "5px",
+            }}
+            onClick={() => {
+              if(auth.app) {
+                navigate("/approver");
+              }
+            }}
+          >
+          Approver Panel
+        </Button>
+        )
+    }
+
 
     useEffect(() => {
 
@@ -189,6 +233,16 @@ export default function Profile() {
                     >
                         Test Auth
                     </Button> */}
+                    {auth.app && auth.app.fields.auth_level == "admin" && (
+                        <Grid item align="right" color="transparent" sx={{marginBottom: "10px"}}>
+                            <AdminPanelButton auth={auth}/>
+                        </Grid>
+                    )}
+                    {auth.app && auth.app.fields.auth_level == "verifier" && (
+                        <Grid item align="right" color="transparent"sx={{marginBottom: "10px"}}>
+                            <ApproverPanelButton auth={auth}/>
+                        </Grid>
+                    )}
                     <Button 
                         variant="contained" 
                         size="large" 

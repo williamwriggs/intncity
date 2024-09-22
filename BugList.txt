@@ -37,3 +37,10 @@ Admin Panel
 Planting Flow
  - Map View
     - Implement drag and drop for map view pins
+
+Change Done button on uppy uploader ✅
+Drag and drop pins
+questions and comments instead of just questions ✅
+reloading bug on admin panel ✅
+restrict upload of photos to only jpeg (no heic) ✅
+parse lat long on front end for raw data

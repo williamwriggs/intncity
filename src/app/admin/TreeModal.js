@@ -63,7 +63,7 @@ export default function TreeModal({ open, handleClose, tree, approveFunction }) 
                         <Typography>{tree?.fields["Location Latitude"]}</Typography>
                         <Typography>Longitude:</Typography>
                         <Typography>{tree?.fields["Location Longitude"]}</Typography>
-                        <Typography>Comments:</Typography>
+                        <Typography>Questions & Notes:</Typography>
                         <Typography>{tree?.fields["Questions"]}</Typography>
                     </div>
                 </Grid>

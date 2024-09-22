@@ -32,52 +32,6 @@ function Copyright() {
   );
 }
 
-const AdminPanelButton = ({ auth }) => {
-  let navigate = useRouter().push;
-
-  return (
-    <Button
-      color="secondary"
-      type="button"
-      size="large"
-      variant="contained"
-      sx={{
-        borderRadius: "5px",
-      }}
-      onClick={() => {
-        if(auth.app) {
-          navigate("/admin");
-        }
-      }}
-    >
-    Admin Panel
-  </Button>
-  )
-}
-
-const ApproverPanelButton = ({ auth }) => {
-  let navigate = useRouter().push;
-
-  return (
-    <Button
-      color="secondary"
-      type="button"
-      size="large"
-      variant="contained"
-      sx={{
-        borderRadius: "5px",
-      }}
-      onClick={() => {
-        if(auth.app) {
-          navigate("/approver");
-        }
-      }}
-    >
-    Approver Panel
-  </Button>
-  )
-}
-
 const AuthButton = () => {
   const { currentTrees, setCurrentTrees} = useAppContext()
   const [activeStep, setActiveStep] = useLocalStorage("appStep", 0);
@@ -115,6 +69,11 @@ const AuthButton = () => {
       setConnected(auth.connected);
     }
   }, [auth]);
+
+
+  useEffect(() => {
+    console.log(auth.app)
+  }, [auth])
 
   // useEffect(() => {
   //   console.log(auth)
@@ -246,16 +205,6 @@ export default function StartTreePlantingRequest() {
               {!auth.connected && (
                 <Grid item align="right" color="transparent">
                   <AuthButton />
-                </Grid>
-              )}
-              {auth.app && auth.app.fields.auth_level == "admin" && (
-                <Grid item align="right" color="transparent">
-                  <AdminPanelButton auth={auth}/>
-                </Grid>
-              )}
-              {auth.app && auth.app.fields.auth_level == "verifier" && (
-                <Grid item align="right" color="transparent">
-                  <ApproverPanelButton auth={auth}/>
                 </Grid>
               )}
             </Box>

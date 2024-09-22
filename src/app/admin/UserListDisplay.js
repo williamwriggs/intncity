@@ -28,11 +28,6 @@ export default function UserListDisplay({
         setModalUser(null)
         setUserModalOpen(false)
     }
-
-    useEffect(() => {
-        console.log(page)
-        console.log(lastPage)
-    }, [lastPage])
     
     const approveRow = () => {
         resetUsers()
@@ -86,10 +81,6 @@ export default function UserListDisplay({
         setLoading(false)
         setUsersLoading(false)
     }
-
-    useEffect(() => {
-        console.log(users)
-    }, [users])
     
     const resetUsers = () => {
         getUsersPage(null, null, true, 0)
@@ -121,9 +112,9 @@ export default function UserListDisplay({
     }
     
     useEffect(() => {
-        if(auth.provider && auth.connected && !users.length) {
+        console.log(auth.provider, auth.connected, users.length)
+        if(auth.provider && auth.connected && !users.length && !usersLoading) {
             console.log("fetching...")
-            console.log(auth)
             getUsersPage(search, offsets[offsets?.length - 1] || null)
         }
     }, [auth, users])

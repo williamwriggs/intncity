@@ -20,10 +20,15 @@ import { useLocalStorage, getStorageValue } from "@/utilities/useLocalStorage";
 import UppyUploadWidget from './ImageUploadUppy';
 
 export default function Review({ prError }) {
-  const [notes, setNotes] = useLocalStorage("notes", "");
   const { currentTrees, setCurrentTrees } = useAppContext()
   const [currentTreeName, setCurrentTreeName] = useState();
   const [selectedTree, setSelectedTree] = useState(0)
+
+  useEffect(() => {
+    console.log(selectedTree)
+    console.log(currentTrees[selectedTree].questions)
+    console.log("++++++++++++++")
+  }, [selectedTree])
 
   useEffect(() => {
     setCurrentTrees(getStorageValue("currentTrees", []))
@@ -45,7 +50,6 @@ export default function Review({ prError }) {
     const trees = [...currentTrees]
     trees[selectedTree].questions = event.target.value
     setCurrentTrees(trees)
-    setNotes(event.target.value);
   }
 
   const handleSelectTree = (index) => {
@@ -71,9 +75,6 @@ export default function Review({ prError }) {
         <List disablePadding key={selectedTree}>
           {currentTrees.map((tree, index) => {
             const plantingDetails = "Location: " + tree.address;
-            console.log("length check " + index, tree?.images?.length > 0)
-            console.log(tree)
-            console.log("selected check " + index, selectedTree !== index)
             // TODO: fix tree selector style & image uploading
             return (
               <ListItem key={tree.name + "_" + index} onClick={() => handleSelectTree(index)} sx={treeSelectorStyle}>
@@ -98,7 +99,7 @@ export default function Review({ prError }) {
       </Grid>
     </Box>
     <Typography variant="h6" gutterBottom>
-        Questions
+        Questions & Notes
     </Typography>
     <TextField
         label={"Do you have any questions or notes about the " + currentTreeName + "?"}
@@ -106,7 +107,7 @@ export default function Review({ prError }) {
         rows={5}
         variant="standard"
         onChange={handleChangeNotes}
-        value={currentTrees[selectedTree].questions} />
+        value={currentTrees[selectedTree].questions || ""} />
     </Stack>
   );
 }

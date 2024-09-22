@@ -89,10 +89,6 @@ export default function TreeListDisplay({
         handleTreeModalClose()
     }
 
-    useEffect(() => {
-        console.log(trees)
-    }, [trees])
-    
     const resetTrees = () => {
         getUnapprovedTreesPage(null, null, true, 0)
     }
@@ -123,7 +119,7 @@ export default function TreeListDisplay({
     }
     
     useEffect(() => {
-        if(auth.provider && auth.connected && !trees.length) {
+        if(auth.provider && auth.connected && !trees.length && !treesLoading) {
             console.log("fetching...")
             console.log(auth)
             getUnapprovedTreesPage(search, offsets[offsets?.length - 1] || null)
