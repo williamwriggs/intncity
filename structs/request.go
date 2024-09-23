@@ -27,6 +27,8 @@ type TreeRequest struct {
 	Signature         string      `json:"Signature"`
 	Approver          []string    `json:"Approver"`
 	ApproverSignature string      `json:"Approver Signature"`
+	ManualLocation    bool        `json:"Manual Location"`
+	ParsedLocation    bool        `json:"Parsed Location"`
 }
 
 type ImageData struct {
@@ -49,17 +51,19 @@ type TreeRecord struct {
 }
 
 type TreeFields struct {
-	RequestId   string    `json:"Request ID"`
-	TreeId      string    `json:"Tree ID"`
-	RequestDate time.Time `json:"Request Date"`
-	Requestor   []string  `json:"Requestor"`
-	Status      string    `json:"Status"`
-	Tree        string    `json:"Tree Name"`
-	Questions   string    `json:"Questions"`
-	Images      []string  `json:"Images"`
-	Lat         float64   `json:"Location Latitude"`
-	Address     string    `json:"Location Address"`
-	Long        float64   `json:"Location Longitude"`
+	RequestId      string    `json:"Request ID"`
+	TreeId         string    `json:"Tree ID"`
+	RequestDate    time.Time `json:"Request Date"`
+	Requestor      []string  `json:"Requestor"`
+	Status         string    `json:"Status"`
+	Tree           string    `json:"Tree Name"`
+	Questions      string    `json:"Questions"`
+	Images         []string  `json:"Images"`
+	Lat            float64   `json:"Location Latitude"`
+	Address        string    `json:"Location Address"`
+	Long           float64   `json:"Location Longitude"`
+	ManualLocation bool      `json:"Manual Location"`
+	ParsedLocation bool      `json:"Parsed Location"`
 }
 
 type TreeResponseRecord struct {
@@ -85,6 +89,8 @@ type TreeResponseFields struct {
 	Address          string      `json:"Location Address"`
 	Long             float64     `json:"Location Longitude"`
 	RawData          string      `json:"Raw Data"`
+	ManualLocation   bool        `json:"Manual Location"`
+	ParsedLocation   bool        `json:"Parsed Location"`
 }
 
 type TreeImage struct {

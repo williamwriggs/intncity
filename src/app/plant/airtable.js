@@ -100,18 +100,22 @@ export async function createTreePlantingRequest(prs, provider) {
       "Images": [],
       "Location Address": pr.address,
       "Raw Data": null,
-      "Signature": null
+      "Signature": null,
+      "Manual Location": pr.manualLocation || false
     }
 
     let gps
     
     for(const image of pr.images) {
       formatted["Images"].push({url: image, filename: pr.name + "_" + formatted["Request Date"] + "_" + i})
-      gps = await exifr.gps(image)
-      console.log(gps)
-      if(gps.latitude) {
-        formatted["Location Longitude"] = gps.longitude
-        formatted["Location Latitude"] = gps.latitude
+      if(!pr?.manualLocation) {
+        gps = await exifr.gps(image)
+        if(gps?.latitude) {
+          formatted["Location Longitude"] = gps.longitude
+          formatted["Location Latitude"] = gps.latitude
+        }
+      } else {
+        gps = { longitude: pr.longitude, latitude: pr.latitude}
       }
     }
     const rawData = prToRawData(pr, treeId, address, gps)

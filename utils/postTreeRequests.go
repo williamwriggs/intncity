@@ -38,13 +38,19 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) (string, e
 		request.RequestId = id.String()
 		request.Requestor = append(requestor, acc.Id)
 
-		for _, image := range request.Images {
-			lat, long, err := ParseImageLocation(image.Url)
-			if err != nil {
-				fmt.Println("error parsing image location:", err)
-			} else {
-				request.Lat = lat
-				request.Long = long
+		fmt.Println(request.ManualLocation)
+		fmt.Println("###############")
+
+		if request.ManualLocation != true {
+			for _, image := range request.Images {
+				lat, long, err := ParseImageLocation(image.Url)
+				if err != nil {
+					fmt.Println("error parsing image location:", err)
+				} else {
+					request.Lat = lat
+					request.Long = long
+					request.ParsedLocation = true
+				}
 			}
 		}
 

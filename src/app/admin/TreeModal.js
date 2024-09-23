@@ -54,17 +54,22 @@ export default function TreeModal({ open, handleClose, tree, approveFunction }) 
                     <img style={{maxWidth: "100%", maxHeight: "45vh", borderRadius: "10px"}} src={tree?.fields["Images"][0]?.url} alt="Unable to load image"/>
                 </Grid>
                 <Grid item sm={12} md={6} lg={6}  sx={{width: "100%"}}>
-                    <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", width: "100%", margin: "auto", gap: "5px", marginTop: "20px"}}>
-                        <Typography>Email:</Typography>
-                        <Typography>{tree?.fields["Requestor Email"][0]}</Typography>
-                        <Typography>Address:</Typography>
-                        <Typography>{tree?.fields["Location Address"]}</Typography>
-                        <Typography>Latitude:</Typography>
-                        <Typography>{tree?.fields["Location Latitude"]}</Typography>
-                        <Typography>Longitude:</Typography>
-                        <Typography>{tree?.fields["Location Longitude"]}</Typography>
-                        <Typography>Questions & Notes:</Typography>
-                        <Typography>{tree?.fields["Questions"]}</Typography>
+                    <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", width: "100%", margin: "auto", gap: "1px", marginTop: "20px", backgroundColor: "lightgray"}}>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>Email:</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>{tree?.fields["Requestor Email"][0]}</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>Address:</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>{tree?.fields["Location Address"]}</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>Latitude:</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>{tree?.fields["Location Latitude"]}</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>Longitude:</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>{tree?.fields["Location Longitude"]}</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>Location Method:</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>{
+                            tree?.fields["Manual Location"] ? "Manual ✅" : 
+                                tree?.fields["Parsed Location"] ? "Auto ✅" : "Address Only ⚠️"
+                        }</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>Questions & Notes:</Typography>
+                        <Typography sx={{backgroundColor: "white", padding: "7px"}}>{tree?.fields["Questions"]}</Typography>
                     </div>
                 </Grid>
             </Grid>

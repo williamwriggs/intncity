@@ -98,6 +98,7 @@ export default function TreeMap(props) {
     newTrees[index].loc = loc || undefined
     newTrees[index].latitude = loc.lat()
     newTrees[index].longitude = loc.lng()
+    newTrees[index].manualLocation = false
     console.log(loc)
     setCurrentTrees(newTrees)
   }
@@ -169,7 +170,20 @@ export default function TreeMap(props) {
                   onLoad={onMarkerLoad} 
                   // onClick={() => onClickMarker(office.id)}
                   position={marker}
-                  draggable={false}
+                  draggable={true}
+                  onDragEnd={(e) => {
+                    let newTrees = [...currentTrees]
+                    const lat = e.latLng.lat()
+                    const lng = e.latLng.lng()
+                    newTrees[index].latitude = lat
+                    newTrees[index].longitude = lng
+                    newTrees[index].loc = { lat, lng }
+                    newTrees[index].manualLocation = true
+                    let newMarkers = [...mapMarkers]
+                    newMarkers[index].position = { lat, lng }
+                    setCurrentTrees(newTrees)
+                    setMapMarkers(newMarkers)
+                  }}
                   clickable={false}
                   title={"Designated planting location, drag the marker to reposition"}
                   />
