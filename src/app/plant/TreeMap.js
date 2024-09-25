@@ -160,7 +160,6 @@ export default function TreeMap(props) {
                   <MarkerF
                   label={"" + (index + 1)}
                   key={'marker' + index}
-                  onLoad={onMarkerLoad} 
                   // onClick={() => onClickMarker(office.id)}
                   position={marker}
                   draggable={true}
