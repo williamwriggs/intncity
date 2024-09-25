@@ -336,9 +336,11 @@ export default function PlantingRequestForm() {
               </div>
             ) : (
             <React.Fragment>
-              <Typography variant="h6" sx={{textAlign: "center"}}>
-                Your Application ID is #{appId}.
-              </Typography>
+              <div style={{width: "80%"}}>
+                <Typography variant="h6" align="center">
+                  Your Application ID is #{appId}.
+                </Typography>
+              </div>
               <Box m={1} display="flex" flexDirection="column" justifyContent="center" alignItems="center">
                 <Button 
                     onClick={handleNewTreeRequest}
