@@ -56,10 +56,6 @@ export default function Profile() {
     const [usersError, setUsersError] = useState(null);
     const [usersLoading, setUsersLoading] = useState(false);
 
-    useEffect(() => {
-        console.log("users update")
-    }, [users])
-
 
     useEffect(() => {
         if(appInfo && appInfo?.fields?.auth_level !== "admin") {
@@ -72,7 +68,6 @@ export default function Profile() {
 
         const getUserInfo = async () => {
             const info = await auth.user?.getUserInfo()
-            console.log(info)
             setUserInfo(info)
         }
 
@@ -84,7 +79,6 @@ export default function Profile() {
 
         if(auth.app) {
             setAppInfo(auth.app)
-            console.log(auth.app)
         }
 
     }, [auth])

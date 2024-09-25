@@ -14,7 +14,6 @@ import (
 func RequestHandler(w http.ResponseWriter, r *http.Request) {
 	address, err := middleware.AuthMiddleware(r)
 	if err != nil {
-		fmt.Println("error in auth middleware:", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -25,21 +24,18 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			fmt.Println("error reading body:", err)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = json.Unmarshal(body, &requests)
 		if err != nil {
-			fmt.Println("error unmarshalling body:", err)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		id, err := utils.PostTreeRequests(address, requests)
 		if err != nil {
-			fmt.Println("error posting tree request:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -100,7 +96,6 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 
 		r, err := utils.GetUnapprovedRequests(search, offset)
 		if err != nil {
-			fmt.Println(err)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}

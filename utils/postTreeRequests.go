@@ -19,7 +19,6 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) (string, e
 
 	acc, err := GetAccount(address)
 	if err != nil {
-		fmt.Println("error getting user account:", err)
 		return "", err
 	}
 
@@ -38,15 +37,10 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) (string, e
 		request.RequestId = id.String()
 		request.Requestor = append(requestor, acc.Id)
 
-		fmt.Println(request.ManualLocation)
-		fmt.Println("###############")
-
 		if request.ManualLocation != true {
 			for _, image := range request.Images {
 				lat, long, err := ParseImageLocation(image.Url)
-				if err != nil {
-					fmt.Println("error parsing image location:", err)
-				} else {
+				if err == nil {
 					request.Lat = lat
 					request.Long = long
 					request.ParsedLocation = true
@@ -92,8 +86,6 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) (string, e
 		return "", err
 	}
 
-	fmt.Println(string(body))
-
 	url := fmt.Sprintf("https://api.airtable.com/v0/%s/%s",
 		os.Getenv("AIRTABLE_BASE_ID"), os.Getenv("AIRTABLE_TREE_REQUESTS_TABLE_ID"))
 
@@ -117,19 +109,16 @@ func PostTreeRequests(address string, requests []structs.TreeRequest) (string, e
 
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
 		err = fmt.Errorf("error sending tree request: %s", err)
 		return "", err
 	}
 
-	fmt.Println(res.Status)
 	if res.StatusCode != 200 {
 		err = fmt.Errorf("error sending tree request: POST rejected")
 		return "", err
 	}
 
 	body, err = io.ReadAll(res.Body)
-	fmt.Println(string(body))
 	if err != nil {
 		err = fmt.Errorf("error sending tree request: %s", err)
 		return "", err

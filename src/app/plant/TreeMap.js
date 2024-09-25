@@ -75,14 +75,13 @@ export default function TreeMap(props) {
 
   // Initialize Google map instance
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyByT6Sov6C1_WUCU0HtUiYrEuuaDxL5VFs",
+    googleMapsApiKey: "AIzaSyBoeOopqQNAYIG5Skw8vtEQGDrYxakycrU",
     libraries: Libraries
   });
 
   const onMapLoad = React.useCallback(
     function onLoad (mapInstance) {
       setMapInstance(mapInstance);
-      console.log("Map script loaded");
     }
   )
 
@@ -99,7 +98,6 @@ export default function TreeMap(props) {
     newTrees[index].latitude = loc.lat()
     newTrees[index].longitude = loc.lng()
     newTrees[index].manualLocation = false
-    console.log(loc)
     setCurrentTrees(newTrees)
   }
 
@@ -107,14 +105,12 @@ export default function TreeMap(props) {
     const locs = currentTrees.map((tree) => {
       return tree?.loc || null
     })
-    console.log(locs)
     setMapMarkers(locs)
   }, [currentTrees])
 
   const onPlaceChanged = (index) => {
     if (addressAutocompletes[index]) {
       const place = addressAutocompletes[index].getPlace();
-      console.log(place)
       const loc = place?.geometry?.location
       if(mapInstance) {
         mapInstance.panTo(loc);
@@ -126,9 +122,6 @@ export default function TreeMap(props) {
     }
   };
 
-  const onMarkerLoad = (marker) => {
-    console.log("Marker Position: ", JSON.stringify(marker.position));
-  };
 
   return (
     <Stack spacing={4}>

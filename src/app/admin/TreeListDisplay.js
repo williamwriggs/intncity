@@ -29,12 +29,6 @@ export default function TreeListDisplay({
         setTreeModalOpen(false)
     }
 
-    useEffect(() => {
-        console.log(page)
-        console.log(lastPage)
-    }, [lastPage])
-
-
     const handleOffset = (offset, newPage) => {
         if(offset === "") {
             setLastPage(newPage || 0)
@@ -71,7 +65,6 @@ export default function TreeListDisplay({
                     setLastPage(undefined)
                 }
             } else {
-                console.log("no reset")
                 setTrees([...trees, t.records])
                 handleOffset(t.offset, newPage)
             }
@@ -120,8 +113,6 @@ export default function TreeListDisplay({
     
     useEffect(() => {
         if(auth.provider && auth.connected && !trees.length && !treesLoading) {
-            console.log("fetching...")
-            console.log(auth)
             getUnapprovedTreesPage(search, offsets[offsets?.length - 1] || null)
         }
     }, [auth, trees])

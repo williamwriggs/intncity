@@ -8,15 +8,6 @@ import Web3 from "web3";
 import prToRawData from "@/auth/prToRawData";
 import exifr from "exifr";
 
-const API_KEY = "keyXYRXQVx9uUgYSX";
-const BASE_ID = "appTdrMAIaYDa7one";
-
-Airtable.configure({
-  endpointUrl: "https://api.airtable.com",
-  apiKey: API_KEY,
-});
-const base = Airtable.base(BASE_ID);
-
 // Custom React Hook for fetching Tree List from Airtable
 export function useTreeList() {
   const [treeList, setTreeList] = useState(null);
@@ -63,14 +54,11 @@ export function useTreeListNew() {
   const url = "/api/trees";
 
   const fetchTreeList = async () => {
-    console.log(treeList.length)
     if(!treeList.length) {
-      console.log("fetching tree list")
       const res = await fetch(url, {
         method: "GET",
       });
       const trees = await res.json();
-      console.log(trees)
       setTreeList(trees);
     }
   };
@@ -127,8 +115,6 @@ export async function createTreePlantingRequest(prs, provider) {
     requests.push(formatted)
   }
 
-  console.log("requests")
-  console.log(requests)
 
 
   const res = await signedFetch("/api/request", {

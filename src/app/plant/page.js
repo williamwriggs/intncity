@@ -71,8 +71,6 @@ export default function PlantingRequestForm() {
     const handleSubmitPrs = async () => {
       const prs = getStorageValue("currentTrees", [])
 
-      console.log("requests: ", prs)
-  
       // Create request in Airtable
       let requestId;
 
@@ -153,7 +151,6 @@ export default function PlantingRequestForm() {
           break
         }
       }
-      console.log(v)
       setValidated(v)
     }
   }, [activeStep, currentTrees])
@@ -178,8 +175,6 @@ export default function PlantingRequestForm() {
   }, [])
 
   useEffect(() => {
-    console.log(auth);
-    console.log(auth?.user);
     if((auth && auth?.provider) && (auth?.user?.connected === false || !auth?.provider)) {
       router.replace("/")
     }
@@ -235,25 +230,19 @@ export default function PlantingRequestForm() {
   function onHandleAttributesChanged(key, value) {
     if (key === "complyAppropriateSpecies") {
       setComplyAppropriateSpecies(value);
-      console.log("complyAppropriateSpecies = ", value);      
     }
 
     if (key === "complyMinContainerSize") {
       setComplyMinContainerSize(value);
-      console.log("setComplyMinContainerSize = ", value);      
     }
 
     if (key === "complyWithStandard") {
       setComplyWithStandard(value);    
-      console.log("setComplyWithStandard = ", value);      
     }
 
     if (key === "tree") {
       setTree(value[0]);    
       setCurrentTrees(value)
-      console.log("current trees:")
-      console.log(value)
-      console.log("tree value", value[0])
       // console.log("tree = ", value.name);      
     }
   }

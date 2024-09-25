@@ -112,9 +112,7 @@ export default function UserListDisplay({
     }
     
     useEffect(() => {
-        console.log(auth.provider, auth.connected, users.length)
         if(auth.provider && auth.connected && !users.length && !usersLoading) {
-            console.log("fetching...")
             getUsersPage(search, offsets[offsets?.length - 1] || null)
         }
     }, [auth, users])

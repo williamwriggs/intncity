@@ -35,14 +35,12 @@ export default function TreeModal({ open, handleClose, tree, approveFunction }) 
             setApproved(true)
             setTimeout(approveFunction, 2000)
         } catch(error) {
-            console.log(error)
             setError(true)
             setLoading(false)
         }
 
         
         setLoading(false)
-        console.log("approve")
     }
 
     return (
