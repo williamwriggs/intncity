@@ -36,7 +36,7 @@ export default function UserModal({ open, handleClose, user, approveFunction }) 
             setError(false)
             setLoading(false)
             setSaved(true)
-            setTimeout(approveFunction, 2000)
+            setTimeout(approveFunction, 500)
         } catch(error) {
             setError(error)
             setLoading(false)
