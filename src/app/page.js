@@ -149,7 +149,7 @@ export default function StartTreePlantingRequest() {
         {/*  Right Column - Text Field */}
 
         <CssBaseline />
-        <Grid item sm={12} md={8}>
+        <Grid item sm={12} md={8} sx={{height: "100vh"}}>
           {auth.connected && (
             <Grid item align="right" color="transparent">
               <AuthButton />
@@ -164,10 +164,10 @@ export default function StartTreePlantingRequest() {
               alignItems: "center",
             }}
           >
-            <Typography component="h1" variant="h4" color="primary" pb={4} align="center">
+            <Typography component="h1" variant="h4" color="primary" pb={4}>
               Better Neighborhoods. Same Neighbors.
             </Typography>
-            <div style={{width: "80%"}}>
+            <div style={{width: "90%"}}>
               <Typography component="h2" variant="h6" color="secondary" align="center">
                 {`We're trying to make planting trees more efficient through the
                 power of community—starting in the City of Oakland.`}
