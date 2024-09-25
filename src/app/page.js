@@ -169,10 +169,7 @@ export default function StartTreePlantingRequest() {
             </Typography>
             <Typography component="h2" variant="h6" color="secondary">
               {`We're trying to make planting trees more efficient through the
-              power of community—starting in the City of Oakland. Tell us where
-              you plan to put your tree let us and we will help make sure the
-              location is right and you'll be sure you're making our
-              neighborhoods greener and better.`}
+              power of community—starting in the City of Oakland.`}
             </Typography>
             <Box
               component="form"

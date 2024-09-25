@@ -25,7 +25,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TreeAttributesForm from './Step1TreeAttributes';
 import LocationForm from './Step2Location';
 import Review from './Step3Review';
-import ImageCarousel from './ImageCarousel';
 import { useAuth } from '@/auth/Hooks';
 
 function Copyright() {
@@ -338,8 +337,7 @@ export default function PlantingRequestForm() {
             ) : (
             <React.Fragment>
               <Typography variant="h6">
-                Your Application ID is #{appId}. We have emailed your application
-                confirmation, and will send you an update when your permit has been approved.
+                Your Application ID is #{appId}.
               </Typography>
               <Box m={1} display="flex" flexDirection="column" justifyContent="center" alignItems="center">
                 <Button 
@@ -358,7 +356,6 @@ export default function PlantingRequestForm() {
                     Home  
                   </Button>   
               </Box>
-              <ImageCarousel sx={{width: "800px"}}/>
             </React.Fragment>
           )} </> : (
             <React.Fragment>

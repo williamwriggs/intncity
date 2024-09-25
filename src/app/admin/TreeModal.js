@@ -33,7 +33,7 @@ export default function TreeModal({ open, handleClose, tree, approveFunction }) 
             })
             setError(false)
             setApproved(true)
-            setTimeout(approveFunction, 2000)
+            setTimeout(approveFunction, 500)
         } catch(error) {
             setError(true)
             setLoading(false)
