@@ -167,7 +167,7 @@ export default function StartTreePlantingRequest() {
             <Typography component="h1" variant="h4" color="primary" pb={4} align="center">
               Better Neighborhoods. Same Neighbors.
             </Typography>
-            <Typography component="h2" variant="h6" color="secondary">
+            <Typography component="h2" variant="h6" color="secondary" align="center">
               {`We're trying to make planting trees more efficient through the
               power of community—starting in the City of Oakland.`}
             </Typography>
