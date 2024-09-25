@@ -5,7 +5,6 @@ export default async function route(request, response) {
 
     const ctx = useMiddleware(request, response)
     const account = await getAccount(ctx.auth).catch(console.error)
-    console.log(account || "no account")
 
     switch (request.method) {
         case "GET": {

@@ -24,9 +24,6 @@ export default function UppyUploadWidget({ treeIndex }) {
     setAttachments({})
   }, [treeIndex])
 
-  useEffect(() => {
-    console.log(images)
-  }, [images])
 
   const setTreeImages = (index, images) => {
     const newTrees = [...currentTrees]

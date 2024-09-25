@@ -42,7 +42,6 @@ export default function UserModal({ open, handleClose, user, approveFunction }) 
             setLoading(false)
         }
 
-        console.log("update")
     }
 
     return (

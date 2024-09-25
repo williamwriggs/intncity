@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -21,7 +20,6 @@ func TreesHandler(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		rows, err := utils.GetTrees()
 		if err != nil {
-			fmt.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

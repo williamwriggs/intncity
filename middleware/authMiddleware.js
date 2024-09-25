@@ -25,7 +25,6 @@ export default function authMiddleware(request) {
     switch(request.method) {
         case "GET": {
             signerString = new URL(request.url, "http://localhost:3000").search + time
-            console.log(signerString)
             break
         }
 

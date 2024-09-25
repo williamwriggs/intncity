@@ -54,26 +54,19 @@ const AuthButton = () => {
       setActiveStep(0)
       setCurrentTrees([t])
     }
-    console.log(connected);
   }, [connected]);
 
   useEffect(() => {
     if (auth) {
-      console.log(auth);
       setConnected(auth.connected);
     }
     if (auth.user) {
-      console.log(auth.user);
       setUser(auth.user);
-      console.log(auth.connected);
       setConnected(auth.connected);
     }
   }, [auth]);
 
 
-  useEffect(() => {
-    console.log(auth.app)
-  }, [auth])
 
   // useEffect(() => {
   //   console.log(auth)

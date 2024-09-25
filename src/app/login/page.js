@@ -35,7 +35,6 @@ export default function SignIn() {
   let navigate = useRouter().push;
   const auth = useAuth();
 
-    console.log(auth)
 
   const handleLogin = (event, method) => {
     event.preventDefault();
@@ -46,9 +45,7 @@ export default function SignIn() {
     auth.Login("google")
 
     // redirect to main app
-    if (auth.Connected()) {
-      console.log("connected")
-    }
+
   };
 
   const EmailPasswordSignIn = () => {

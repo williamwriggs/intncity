@@ -19,12 +19,9 @@ export default async function getUnapprovedTrees(provider, options) {
         provider
     })
 
-    console.log(res)
 
     const unapprovedTrees = await res.json().catch(console.error)
 
-    console.log('unapproved requests')
-    console.log(unapprovedTrees)
 
     return unapprovedTrees
 }

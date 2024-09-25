@@ -28,8 +28,6 @@ func PatchUser(request structs.AccountUpdateRequest, account *structs.AccountRec
 		return err
 	}
 
-	fmt.Println(string(body))
-
 	url := fmt.Sprintf("https://api.airtable.com/v0/%s/%s",
 		os.Getenv("AIRTABLE_BASE_ID"), os.Getenv("AIRTABLE_AUTH_TABLE_ID"))
 
@@ -51,15 +49,10 @@ func PatchUser(request structs.AccountUpdateRequest, account *structs.AccountRec
 		Timeout: time.Second * 10,
 	}
 
-	res, err := client.Do(req)
+	_, err = client.Do(req)
 	if err != nil {
-		fmt.Println(err)
 		err = fmt.Errorf("error sending patch request: %s", err)
 		return err
-	}
-
-	if res.StatusCode != 200 {
-		fmt.Println(res.Status)
 	}
 
 	return nil

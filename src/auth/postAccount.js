@@ -3,8 +3,6 @@ import signedFetch from "./signedFetch"
 export default async function postAccount(name, email, provider) {
     let error
 
-    console.log("user: ", name, email)
-    
     const res = await signedFetch("/api/account", {
         method: "POST",
         body: JSON.stringify({

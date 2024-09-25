@@ -47,8 +47,6 @@ func GetAccounts(search string, offset string) (*structs.AccountsResponse, error
 	query.Add("offset", offset)
 	req.URL.RawQuery = query.Encode()
 
-	fmt.Println(req.URL.RawQuery)
-
 	client := http.Client{
 		Timeout: time.Second * 10,
 	}

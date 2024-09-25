@@ -58,7 +58,5 @@ func GetTree(id string) (*structs.TreeResponseRecord, error) {
 		return nil, err
 	}
 
-	fmt.Println(record)
-
 	return record, nil
 }

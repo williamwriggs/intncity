@@ -82,7 +82,6 @@ export default function Profile() {
 
         const getUserInfo = async () => {
             const info = await auth.user?.getUserInfo()
-            console.log(info)
             setUserInfo(info)
         }
 
@@ -90,10 +89,7 @@ export default function Profile() {
             const signature = await sign(auth.provider, "test")
             const web3 = new Web3(auth.provider)
             const address = (await web3.eth.getAccounts())[0]
-            console.log("account: " + address)
-            console.log("signature: " + signature)
             const recoveredAddress = await recover("test", signature)
-            console.log("recovered address: " + recoveredAddress)
         }
 
         if(auth?.provider && auth?.user?.connected === false) {
@@ -105,7 +101,6 @@ export default function Profile() {
 
         if(auth.app) {
             setAppInfo(auth.app)
-            console.log(auth.app)
         }
 
     }, [auth])

@@ -31,7 +31,6 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
   }, []);
 
   const handlePlantSelectionChange = (event, newValue, index) => {
-    console.log(index)
     const updatedTrees = [...currentTrees];
     updatedTrees[index] = { ...updatedTrees[index], name: newValue.name, category: newValue.category };
     setCurrentTrees(updatedTrees);
@@ -53,7 +52,6 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
       setCurrentTrees([...currentTrees, newTree]);
     };
 
-    console.log("CURRENT TREES", currentTrees);
 
     return (
       <Button
@@ -85,7 +83,6 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
       onPlantSelectionChanged(updatedTrees);
     };
 
-    console.log("CURRENT TREES", currentTrees);
 
     return (
       <Button

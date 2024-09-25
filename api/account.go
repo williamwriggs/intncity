@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -14,7 +13,6 @@ import (
 func AccountHandler(w http.ResponseWriter, r *http.Request) {
 	address, err := middleware.AuthMiddleware(r)
 	if err != nil || address == "" {
-		fmt.Println(err)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -23,7 +21,6 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		acc, err := utils.GetAccount(address)
 		if err != nil {
-			fmt.Println("error in getAccount before post:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -35,7 +32,6 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			fmt.Printf("error reading request body: %s\n", err)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -44,7 +40,6 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 
 		err = json.Unmarshal(body, &accountInfo)
 		if err != nil {
-			fmt.Println(err)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -56,7 +51,6 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 
 		err = utils.PostAccount(address, accountInfo.Email, accountInfo.Name)
 		if err != nil {
-			fmt.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -65,7 +59,6 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		account, err := utils.GetAccount(address)
 		if err != nil {
-			fmt.Println("error getting account:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -78,7 +71,6 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 
 		body, err := json.Marshal(account)
 		if err != nil {
-			fmt.Println("error marshalling account:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

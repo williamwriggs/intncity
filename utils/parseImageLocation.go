@@ -34,7 +34,6 @@ func ParseImageLocation(url string) (float64, float64, error) {
 	lat := exif.GPS.Latitude()
 	long := exif.GPS.Longitude()
 	if exif.GPS.Date().Unix() == -62135596800 {
-		fmt.Println(lat, long)
 		err = fmt.Errorf("no image location data found")
 		return 0, 0, err
 	}

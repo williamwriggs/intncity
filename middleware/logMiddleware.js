@@ -10,7 +10,6 @@ export default function logMiddleware(request, response, auth, value) {
         const ms = finish - start
         const time = new Date(start).toJSON()
 
-        console.log(" ", method, status, endpoint, ms + "ms", time, ip, auth || "no-auth" )
         send(message)
     }
 }

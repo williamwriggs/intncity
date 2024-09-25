@@ -20,12 +20,9 @@ export default async function getUsers(provider, options) {
         provider
     })
 
-    console.log(res)
 
     const users = await res.json().catch(console.error)
 
-    console.log('users')
-    console.log(users)
 
     return users
 }

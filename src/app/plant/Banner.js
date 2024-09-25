@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 
 export default function Banner(props) {
-  if (props.newProp) console.log(props.newProp);
   const contentPosition = props.contentPosition
     ? props.contentPosition
     : "left";

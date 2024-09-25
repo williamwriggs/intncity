@@ -21,14 +21,7 @@ func VerifyRawData(request structs.TreeRequest, address string) error {
 		request.TreeName == unmarshalled.TreeName &&
 		request.Address == unmarshalled.Address
 
-	fmt.Println(request.TreeId, unmarshalled.TreeId)
-	fmt.Println(request.Requestor[0], unmarshalled.Requestor[0])
-	fmt.Println(request.TreeCategory, unmarshalled.TreeCategory)
-	fmt.Println(request.TreeName, unmarshalled.TreeName)
-	fmt.Println(request.Address, unmarshalled.Address)
-
 	if !verified {
-		fmt.Println("error verifying raw data: data does not match")
 		return fmt.Errorf("error verifying raw data: data does not match")
 	}
 

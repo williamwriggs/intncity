@@ -58,7 +58,6 @@ export default function Profile() {
 
         const getUserInfo = async () => {
             const info = await auth.user?.getUserInfo()
-            console.log(info)
             setUserInfo(info)
         }
 
@@ -70,7 +69,6 @@ export default function Profile() {
 
         if(auth.app) {
             setAppInfo(auth.app)
-            console.log(auth.app)
         }
 
     }, [auth])

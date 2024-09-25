@@ -11,14 +11,12 @@ import (
 func AuthHandler(w http.ResponseWriter, r *http.Request) {
 	acc, err := middleware.AuthMiddleware(r)
 	if err != nil {
-		fmt.Println("error using auth middleware:", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	account, err := utils.GetAccount(acc)
 	if err != nil {
-		fmt.Println("error getting account:", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

@@ -25,12 +25,6 @@ export default function Review({ prError }) {
   const [selectedTree, setSelectedTree] = useState(0)
 
   useEffect(() => {
-    console.log(selectedTree)
-    console.log(currentTrees[selectedTree].questions)
-    console.log("++++++++++++++")
-  }, [selectedTree])
-
-  useEffect(() => {
     setCurrentTrees(getStorageValue("currentTrees", []))
     let capitalize = (w) => {
       let n = w.split(" ")

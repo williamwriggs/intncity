@@ -14,7 +14,6 @@ import (
 
 func PatchApproverRequest(request structs.ApproverRequestFields, account *structs.AccountRecord) error {
 	godotenv.Load("../../../../.env")
-	fmt.Println(request.TreeId)
 
 	tree, err := GetTree(request.TreeId)
 	if err != nil {
@@ -50,16 +49,11 @@ func PatchApproverRequest(request structs.ApproverRequestFields, account *struct
 	formattedRecord.Fields = request
 	formattedRequest.Records = append(formattedRequest.Records, formattedRecord)
 
-	fmt.Println(formattedRequest)
-	fmt.Println("|||||||||||||||")
-
 	body, err := json.Marshal(formattedRequest)
 	if err != nil {
 		err = fmt.Errorf("error marshalling approver request: ", err)
 		return err
 	}
-
-	fmt.Println(string(body))
 
 	url := fmt.Sprintf("https://api.airtable.com/v0/%s/%s",
 		os.Getenv("AIRTABLE_BASE_ID"), os.Getenv("AIRTABLE_TREE_REQUESTS_TABLE_ID"))
@@ -82,15 +76,10 @@ func PatchApproverRequest(request structs.ApproverRequestFields, account *struct
 		Timeout: time.Second * 10,
 	}
 
-	res, err := client.Do(req)
+	_, err = client.Do(req)
 	if err != nil {
-		fmt.Println(err)
 		err = fmt.Errorf("error sending patch request: %s", err)
 		return err
-	}
-
-	if res.StatusCode != 200 {
-		fmt.Println(res.Status)
 	}
 
 	return nil
