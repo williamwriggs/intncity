@@ -216,7 +216,7 @@ export default function Profile() {
                         </Box>
                         <Box align="right" style={{...topTableCellStyle, textTransform: "capitalize"}}>
                             <Typography sx={tableTextStyle}>
-                                {appInfo?.fields.auth_level || <CircularProgress size="1rem" />}
+                                {appInfo?.fields?.auth_level || <CircularProgress size="1rem" />}
                             </Typography>
                         </Box>
                     </Grid>
@@ -228,12 +228,12 @@ export default function Profile() {
                     >
                         Test Auth
                     </Button> */}
-                    {auth.app && auth.app.fields.auth_level == "admin" && (
+                    {auth.app && auth.app.fields?.auth_level == "admin" && (
                         <Grid item align="right" color="transparent" sx={{marginBottom: "10px"}}>
                             <AdminPanelButton auth={auth}/>
                         </Grid>
                     )}
-                    {auth.app && auth.app.fields.auth_level == "verifier" && (
+                    {auth.app && auth.app.fields?.auth_level == "verifier" && (
                         <Grid item align="right" color="transparent"sx={{marginBottom: "10px"}}>
                             <ApproverPanelButton auth={auth}/>
                         </Grid>
