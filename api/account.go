@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -62,6 +63,8 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+
+		fmt.Println(account)
 
 		if account == nil {
 			w.WriteHeader(http.StatusNotFound)
