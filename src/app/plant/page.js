@@ -336,7 +336,7 @@ export default function PlantingRequestForm() {
               </div>
             ) : (
             <React.Fragment>
-              <Typography variant="h6">
+              <Typography variant="h6" sx={{textAlign: "center"}}>
                 Your Application ID is #{appId}.
               </Typography>
               <Box m={1} display="flex" flexDirection="column" justifyContent="center" alignItems="center">

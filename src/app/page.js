@@ -164,7 +164,7 @@ export default function StartTreePlantingRequest() {
               alignItems: "center",
             }}
           >
-            <Typography component="h1" variant="h4" color="primary" pb={4}>
+            <Typography component="h1" variant="h4" color="primary" pb={4} sx={{textAlign: "center"}}>
               Better Neighborhoods. Same Neighbors.
             </Typography>
             <Typography component="h2" variant="h6" color="secondary">
