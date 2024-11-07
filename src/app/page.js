@@ -76,20 +76,37 @@ const AuthButton = () => {
   return (
     <>
       {!connected ? (
-        <Button
-          color="secondary"
-          type="button"
-          size="large"
-          variant="contained"
-          sx={{
-            borderRadius: "5px",
-          }}
-          onClick={() => {
-            auth.Login("google")
-          }}
-        >
-          Sign In
-        </Button>
+        <div>
+          <Button
+            color="secondary"
+            type="button"
+            size="large"
+            variant="contained"
+            sx={{
+              borderRadius: "5px",
+            }}
+            onClick={() => {
+              auth.Login("google")
+            }}
+          >
+            Sign In
+          </Button>
+          <Button
+            color="secondary"
+            type="button"
+            size="large"
+            variant="contained"
+            sx={{
+              borderRadius: "5px",
+            }}
+            onClick={() => {
+              auth.Login("emailpasswordless", "peej@oleary.com")
+            }}
+          >
+            Sign In with Email
+          </Button>
+        </div>
+        
       ) : (
         <Button
           color="secondary"

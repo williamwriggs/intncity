@@ -2,8 +2,8 @@
 import { createContext, useContext, useMemo, useState, useEffect } from "react";
 import { Web3AuthNoModal } from  "@web3auth/no-modal"
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
-import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
-import { LOGIN_PROVIDER, OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import { CHAIN_NAMESPACES, WALLET_ADAPTERS, WEB3AUTH_NETWORK } from "@web3auth/base";
+import { LOGIN_PROVIDER, AuthAdapter } from "@web3auth/auth-adapter";
 import postAccount from "./postAccount";
 import signedFetch from "./signedFetch";
 
@@ -23,21 +23,34 @@ const chainConfig = {
 
 const privateKeyProvider = new EthereumPrivateKeyProvider({
   config: {
-    chainConfig
+    chainConfig,
   }
 })
 
 const web3auth = new Web3AuthNoModal({
   clientId,
-  web3AuthNetwork: "sapphire_devnet",
-  chainConfig
+  web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
+  privateKeyProvider
 })
 
-const adapter = new OpenloginAdapter({
-  privateKeyProvider: privateKeyProvider,
+const adapter = new AuthAdapter({
   adapterSettings: {
     uxMode: "redirect",
-    redirectUrl: process.env.NEXT_PUBLIC_WEB3AUTH_REDIRECT_URL
+    redirectUrl: process.env.NEXT_PUBLIC_WEB3AUTH_REDIRECT_URL,
+    loginConfig: {
+      google: {
+        verifier: "google-email-passwordless",
+        verifierSubIdentifier: "google",
+        typeOfLogin: "google",
+        clientId
+      },
+      email_passwordless: {
+        verifier: "google-email-passwordless",
+        verifierSubIdentifier: "email-passwordless",
+        typeOfLogin: "email_passwordless",
+        clientId
+      }
+    }
   }
 })
 
@@ -91,7 +104,8 @@ export const AuthProvider = ({ children }) => {
   }, [provider])
 
   // call this function when you want to authenticate the user
-  const Login = async (method, params) => {
+  const Login = async (method, hint) => {
+    console.log(clientId)
 
     if (user?.connected) {
       throw new Error("already logged in")
@@ -109,12 +123,18 @@ export const AuthProvider = ({ children }) => {
       switch (method) {
 
         case "google": {
-          web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+          web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.AUTH, {
             loginProvider: LOGIN_PROVIDER.GOOGLE
           })
         }
         
-        case "emailpassword": {
+        case "emailpasswordless": {
+          web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.AUTH, {
+            loginProvider: LOGIN_PROVIDER.EMAIL_PASSWORDLESS,
+            extraLoginOptions: {
+              login_hint: hint
+            }
+          })
         }
   
         case "github": {
