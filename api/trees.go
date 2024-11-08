@@ -15,6 +15,73 @@ type Tree struct {
 	Category string `json:"category"`
 }
 
+var baseTreeList = [...]string{
+	"African fern pine",
+	"Aleppo oak",
+	"atlas cedar",
+	"Brisbane box",
+	"bronze loquat",
+	"cajeput tree",
+	"California buckeye",
+	"Canary Island pine",
+	"Catalina cherry",
+	"chestnut leaf oak",
+	"Chinese pistache",
+	"Chisos red oak",
+	"coast live oak",
+	"compact strawberry tree",
+	"Compton oak",
+	"cork oak",
+	"crape myrtle, Chocta",
+	"crape myrtle, Muskogee",
+	"crape myrtle, Natchez",
+	"crape myrtle, Tuscaror",
+	"encino tezahuatl",
+	"Engelmann oak",
+	"escarpment oak",
+	"evergreen maple",
+	"fastigate blue atlas cedar",
+	"flamegold",
+	"ghost gum",
+	"gold medallion tree",
+	"Hollywood juniper",
+	"island oak",
+	"jelecote pine",
+	"king palm",
+	"lemon-scented gum",
+	"macadamia",
+	"Macedonian oak",
+	"marina madrone",
+	"Mexican blue oak",
+	"Mexican red oak",
+	"Mount Lemmon super gambel oak",
+	"netleaf oak",
+	"New Zealand Christmas tree/Pohutukawa",
+	"olive, Swan Hill (single stem",
+	"pink trumpet tree",
+	"Pyrenees oak",
+	"red flowering gum",
+	"Red Push pistache",
+	"Roberts California sycamore",
+	"rusty leaf fig",
+	"Sartor's oak",
+	"Shangtung maple",
+	"silver dollar gum",
+	"silverleaf oak",
+	"soapbark tree",
+	"southern live oak",
+	"swamp malee",
+	"sweet hakea",
+	"Sydney red gum",
+	"Torrey Pine",
+	"Torrey's hybrid oak",
+	"toyon, Davis Gold",
+	"trident maple",
+	"water gum",
+	"weeping fig",
+	"WestMex red oak",
+}
+
 func TreesHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
@@ -26,6 +93,10 @@ func TreesHandler(w http.ResponseWriter, r *http.Request) {
 
 		trees := []Tree{}
 		currentTrees := make(map[string]bool)
+		for _, tree := range baseTreeList {
+			trees = append(trees, Tree{Name: tree, Quantity: 10, Category: "Approved Trees"})
+			currentTrees[strings.ToLower(tree)] = true
+		}
 
 		if len(rows.Values) > 0 {
 			currentCategory := ""
@@ -63,6 +134,7 @@ func TreesHandler(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
+
 		}
 
 		bytes, err := json.Marshal(trees)

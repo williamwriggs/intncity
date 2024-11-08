@@ -76,7 +76,7 @@ const AuthButton = () => {
   return (
     <>
       {!connected ? (
-        <div>
+        <div style={{display: "grid", gridTemplateRows: "1fr 1fr", gap: "10px"}}>
           <Button
             color="secondary"
             type="button"
@@ -89,7 +89,7 @@ const AuthButton = () => {
               auth.Login("google")
             }}
           >
-            Sign In
+            Sign In with Google
           </Button>
           <Button
             color="secondary"

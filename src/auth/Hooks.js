@@ -42,7 +42,7 @@ const adapter = new AuthAdapter({
         verifier: "google-email-passwordless",
         verifierSubIdentifier: "google",
         typeOfLogin: "google",
-        clientId
+        clientId: "114293822105-klnadodqg04n7o20rk08k5u2ukbsb9mn.apps.googleusercontent.com"
       },
       email_passwordless: {
         verifier: "google-email-passwordless",
@@ -120,11 +120,13 @@ export const AuthProvider = ({ children }) => {
     let web3authProvider
 
     const methodSwitch = async (method) => {
+      console.log(web3auth.status)
       switch (method) {
 
         case "google": {
           web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.AUTH, {
-            loginProvider: LOGIN_PROVIDER.GOOGLE
+            loginProvider: LOGIN_PROVIDER.GOOGLE,
+            verifierIdField: "email"
           })
         }
         
@@ -132,7 +134,8 @@ export const AuthProvider = ({ children }) => {
           web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.AUTH, {
             loginProvider: LOGIN_PROVIDER.EMAIL_PASSWORDLESS,
             extraLoginOptions: {
-              login_hint: hint
+              login_hint: hint,
+              verifierIdField: "email"
             }
           })
         }

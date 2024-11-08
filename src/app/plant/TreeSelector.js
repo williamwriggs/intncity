@@ -135,7 +135,7 @@ export default function PlantSelector({ onPlantSelectionChanged }) {
             }
               renderOption={(props, option) => (
                 <li {...props} key={option.name} value={option} style={{textTransform: "capitalize"}}>
-                  {option.name}
+                  {option.category === "Approved Trees" ? option.name + " ✅" : option.name}
                 </li>
               )}
               renderInput={(params) => (
