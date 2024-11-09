@@ -1,6 +1,6 @@
 import signedFetch from "@/auth/signedFetch"
 
-export default async function getUnapprovedTrees(provider, options) {
+export default async function getTreesPage(provider, options) {
 
     const params = new URLSearchParams()
 
@@ -12,6 +12,8 @@ export default async function getUnapprovedTrees(provider, options) {
     if(search) {
         params.append("search", search)
     }
+    const approved = options.approved
+    params.append("unapproved", approved)
 
     const url = "/api/request?" + params.toString()
     

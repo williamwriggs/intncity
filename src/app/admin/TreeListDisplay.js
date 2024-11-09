@@ -1,7 +1,7 @@
 import { useAuth } from '@/auth/Hooks';
 import { useEffect, useState } from 'react';
-import getUnapprovedTrees from '@/admin/getUnapprovedTrees';
-import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Input, Button, CircularProgress } from '@mui/material';
+import getTreesPage from '@/admin/getTreesPage';
+import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Input, Button, CircularProgress, Checkbox, FormControlLabel } from '@mui/material';
 import * as React from 'react';
 import TreeModal from './TreeModal';
 
@@ -12,7 +12,8 @@ export default function TreeListDisplay({
     page, setPage,
     lastPage, setLastPage,
     treesError, setTreesError,
-    treesLoading, setTreesLoading
+    treesLoading, setTreesLoading,
+    approved, setApproved
 }) {
 
     const [searchString, setSearchString] = useState(search || "")
@@ -23,6 +24,17 @@ export default function TreeListDisplay({
 
     let currentSearch = null;
     let currentOffset = null;
+
+    const firstUpdate = useRef(true);
+
+    useEffect(() => {
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
+        } else if(!treesLoading && auth.provider && auth.connected) {
+            fetchTreesPage(search, undefined, true);
+        }
+    }, [approved])
 
     const handleTreeModalClose = () => {
         setModalTree(null)
@@ -46,13 +58,14 @@ export default function TreeListDisplay({
     }
 
 
-    const getUnapprovedTreesPage = async (search, offset, reset, newPage) => {
+    const fetchTreesPage = async (search, offset, reset, newPage) => {
         setLoading(true)
         setTreesLoading(true)
         try {
-            const t = await getUnapprovedTrees(auth.provider, {
+            const t = await getTreesPage(auth.provider, {
                 offset,
-                search
+                search,
+                approved
             })
             if(reset) {
                 setTrees([t.records])
@@ -83,14 +96,14 @@ export default function TreeListDisplay({
     }
 
     const resetTrees = () => {
-        getUnapprovedTreesPage(null, null, true, 0)
+        fetchTreesPage(null, null, true, 0)
     }
 
     const handleSearch = (e) => {
         e.preventDefault()
         setSearch(searchString)
         const s = searchString === "" ? null : searchString
-        getUnapprovedTreesPage(s, null, true, 0)
+        fetchTreesPage(s, null, true, 0)
     }
 
     const handleNext = async () => {
@@ -99,7 +112,7 @@ export default function TreeListDisplay({
         }
         let newPage = page + 1
         if(!trees[page + 1]?.length) {
-            await getUnapprovedTreesPage(currentSearch, offsets[offsets.length - 1], undefined, newPage)
+            await fetchTreesPage(currentSearch, offsets[offsets.length - 1], undefined, newPage)
         }
         setPage(newPage)
     }
@@ -113,18 +126,25 @@ export default function TreeListDisplay({
     
     useEffect(() => {
         if(auth.provider && auth.connected && !trees.length && !treesLoading) {
-            getUnapprovedTreesPage(search, offsets[offsets?.length - 1] || null)
+            fetchTreesPage(search, offsets[offsets?.length - 1] || null)
         }
     }, [auth, trees])
 
     return (
         <>
-        <form style={{textAlign: "right"}} onSubmit={handleSearch}>
-            <Input placeholder={"Search by email..."} sx={{marginBottom: "20px", marginRight: "20px"}} value={searchString} onChange={(e) => {
-                setSearchString(e.target.value)
-            }}/>
-            <Button color="secondary" type="submit" variant="contained" sx={{borderRadius: "5px"}}>Go</Button>
-        </form>
+        <>
+            <form style={{textAlign: "left", paddingBottom: "0"}} onSubmit={handleSearch}>
+                <Input placeholder={"Search by email..."} sx={{marginBottom: "5px", marginRight: "20px"}} value={searchString} onChange={(e) => {
+                    setSearchString(e.target.value)
+                }}/>
+                <Button color="secondary" type="submit" variant="contained" sx={{borderRadius: "5px"}}>Go</Button>
+            </form>
+            <div style={{textAlign: "right"}}>
+                <FormControlLabel control={<Checkbox sx={{margin: "10px", padding: "0", marginRight: "5px"}} checked={approved} onChange={(e) => {
+                    setApproved(!approved)
+                }}/>} label={"All trees"}/>
+            </div>
+        </>
         { loading ? 
             <Box sx={{display: "block", height: "60vh", textAlign: "center", margin: "auto"}}>
             <Typography>Loading...</Typography>

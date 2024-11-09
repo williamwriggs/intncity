@@ -119,7 +119,7 @@ export default function UserListDisplay({
 
     return (
         <>
-        <form style={{textAlign: "right"}} onSubmit={handleSearch}>
+        <form style={{textAlign: "left"}} onSubmit={handleSearch}>
             <Input placeholder={"Search by email..."} sx={{marginBottom: "20px", marginRight: "20px"}} value={searchString} onChange={(e) => {
                 setSearchString(e.target.value)
             }}/>

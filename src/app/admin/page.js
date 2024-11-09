@@ -45,6 +45,7 @@ export default function Profile() {
     const [treesSearch, setTreesSearch] = useState(null);
     const [treesPage, setTreesPage] = useState(0)
     const [lastTreesPage, setLastTreesPage] = useState(undefined)
+    const [approved, setApproved] = useState(false);
     const [treesError, setTreesError] = useState(null);
     const [treesLoading, setTreesLoading] = useState(false);
 
@@ -55,7 +56,6 @@ export default function Profile() {
     const [lastUsersPage, setLastUsersPage] = useState(undefined)
     const [usersError, setUsersError] = useState(null);
     const [usersLoading, setUsersLoading] = useState(false);
-
 
     useEffect(() => {
         if(appInfo && appInfo?.fields?.auth_level !== "admin") {
@@ -238,6 +238,8 @@ export default function Profile() {
                                 setTreesError={setTreesError}
                                 treesLoading={treesLoading}
                                 setTreesLoading={setTreesLoading}
+                                approved={approved}
+                                setApproved={setApproved}
                             />
                         </CustomTabPanel>
                     </Box>
