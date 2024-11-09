@@ -82,6 +82,12 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 
 		search := r.URL.Query().Get("search")
 		offset := r.URL.Query().Get("offset")
+		a := r.URL.Query().Get("approved")
+
+		approved := false
+		if a == "true" {
+			approved = true
+		}
 
 		account, err := utils.GetAccount(address)
 		if err != nil {
@@ -94,7 +100,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		r, err := utils.GetUnapprovedRequests(search, offset)
+		r, err := utils.GetUnapprovedRequests(search, offset, approved)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return

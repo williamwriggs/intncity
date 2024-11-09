@@ -12,16 +12,25 @@ import (
 	"github.com/williamwriggs/intncity-treetoken/structs"
 )
 
-func GetUnapprovedRequests(search string, offset string) (*structs.TreeQueryResponse, error) {
+func GetUnapprovedRequests(search string, offset string, approved bool) (*structs.TreeQueryResponse, error) {
 	godotenv.Load("../../../../.env")
 
 	baseId := os.Getenv("AIRTABLE_BASE_ID")
 	key := os.Getenv("AIRTABLE_KEY")
 	tableId := os.Getenv("AIRTABLE_TREE_REQUESTS_TABLE_ID")
-
-	filter := `{Approver Signature} = ""`
+	var filter string
+	var filter2 string
+	if !approved {
+		filter = `{Approver Signature} = ""`
+	}
 	if search != "" {
-		filter = fmt.Sprintf(`AND(FIND("%s", {Requestor Email}&"") > 0, %s)`, search, filter)
+		filter2 = fmt.Sprintf(`FIND("%s", {Requestor Email}&"") > 0`, search)
+	}
+	if approved {
+		filter = filter2
+	}
+	if !approved && search != "" {
+		filter = fmt.Sprintf(`AND(%s, %s)`, filter, filter2)
 	}
 
 	count := 10

@@ -13,7 +13,7 @@ export default async function getTreesPage(provider, options) {
         params.append("search", search)
     }
     const approved = options.approved
-    params.append("unapproved", approved)
+    params.append("approved", approved)
 
     const url = "/api/request?" + params.toString()
     

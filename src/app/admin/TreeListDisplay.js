@@ -25,17 +25,6 @@ export default function TreeListDisplay({
     let currentSearch = null;
     let currentOffset = null;
 
-    const firstUpdate = useRef(true);
-
-    useEffect(() => {
-        if (firstUpdate.current) {
-            firstUpdate.current = false;
-            return;
-        } else if(!treesLoading && auth.provider && auth.connected) {
-            fetchTreesPage(search, undefined, true);
-        }
-    }, [approved])
-
     const handleTreeModalClose = () => {
         setModalTree(null)
         setTreeModalOpen(false)
@@ -58,14 +47,17 @@ export default function TreeListDisplay({
     }
 
 
-    const fetchTreesPage = async (search, offset, reset, newPage) => {
+    const fetchTreesPage = async (search, offset, reset, newPage, approvedOverride) => {
+        if(approvedOverride === undefined) {
+            approvedOverride = approved
+        }
         setLoading(true)
         setTreesLoading(true)
         try {
             const t = await getTreesPage(auth.provider, {
                 offset,
                 search,
-                approved
+                approved: approvedOverride
             })
             if(reset) {
                 setTrees([t.records])
@@ -142,6 +134,7 @@ export default function TreeListDisplay({
             <div style={{textAlign: "right"}}>
                 <FormControlLabel control={<Checkbox sx={{margin: "10px", padding: "0", marginRight: "5px"}} checked={approved} onChange={(e) => {
                     setApproved(!approved)
+                    fetchTreesPage(search, undefined, true, undefined, !approved);
                 }}/>} label={"All trees"}/>
             </div>
         </>
